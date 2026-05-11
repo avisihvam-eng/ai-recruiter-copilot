@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+env/
+.venv/
+
+# Environment / secrets
+.env
+*.env
+backend/.env
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Build artifacts
+build_html.py
+build_html2.py
+build_html3.py
+patch_url.py
+remove_lines.py
+test_key.py
+test_pipeline.py
+recruiter_copilot.html
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
