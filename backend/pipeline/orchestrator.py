@@ -120,8 +120,13 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
     outreach_raw = state.get("outreach_output", "{}")
     outreach_data = _extract_json(outreach_raw) if isinstance(outreach_raw, str) else outreach_raw
 
+    clean_jd = jd_data.get("clean_jd", {})
+    # Normalize: accept both "duties" and "responsibilities" from the LLM
+    if "duties" in clean_jd and "responsibilities" not in clean_jd:
+        clean_jd["responsibilities"] = clean_jd.pop("duties")
+
     return {
-        "clean_jd": jd_data.get("clean_jd", {}),
+        "clean_jd": clean_jd,
         "booleans": {
             "strict": jd_data.get("boolean_strict", ""),
             "balanced": jd_data.get("boolean_balanced", ""),

@@ -21,9 +21,9 @@ The JSON must match this exact structure:
     "title": "Job title extracted from JD",
     "location": "Location or Remote",
     "experience": "e.g. 5-8 years",
-    "summary": "2-3 sentence role summary",
-    "duties": ["duty 1", "duty 2", "duty 3"],
-    "required_skills": ["skill1", "skill2"],
+    "summary": "2-3 sentence role summary written in clear, professional language",
+    "responsibilities": ["responsibility 1", "responsibility 2", "responsibility 3"],
+    "required_skills": ["skill1", "skill2", "skill3"],
     "preferred_skills": ["skill1", "skill2"],
     "certifications": ["cert1", "cert2"],
     "tools": ["tool1", "tool2"]
@@ -32,6 +32,11 @@ The JSON must match this exact structure:
   "boolean_balanced": "Balanced Boolean — core skills + some flexibility. Broader than strict.",
   "boolean_broad": "Broad Boolean — cast wide net, good for passive candidates. Include adjacent skills."
 }
+
+IMPORTANT:
+- "responsibilities" should contain 4-8 clear, actionable job duties. Each one should be a full sentence.
+- "required_skills" should list the absolute must-have technical skills (5-10 items).
+- "preferred_skills" should list nice-to-have skills that are not strictly required (3-6 items).
 
 BOOLEAN RULES (follow strictly):
 - Keep each Boolean under 60 words
