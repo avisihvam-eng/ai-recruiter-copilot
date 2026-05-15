@@ -8,20 +8,20 @@
 <style>
 :root {
   --bg: #ffffff;
-  --bg-secondary: #fafafa;
-  --bg-hover: #f5f5f5;
-  --text-primary: #111111;
-  --text-secondary: #555555;
-  --text-tertiary: #888888;
-  --border: #e5e5e5;
-  --border-strong: #d0d0d0;
-  --accent: #111111;
-  --accent-light: #f0f0f0;
-  --green: #22863a;
+  --bg-secondary: #f8f8f7;
+  --bg-hover: #f3f3f2;
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #8b8b8b;
+  --border: #e8e8e6;
+  --border-strong: #d4d4d2;
+  --accent: #1a1a1a;
+  --accent-light: #f0f0ee;
+  --green: #1a7f37;
   --blue: #0969da;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
-  --radius: 8px;
+  --radius: 10px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -310,11 +310,16 @@ kbd {
 #output-section.visible { display: block; }
 
 .output-block {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
   background: var(--bg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  transition: box-shadow 0.2s ease;
+}
+.output-block:hover {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.05);
 }
 .output-block-header {
   display: flex;
@@ -343,16 +348,16 @@ kbd {
   font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 500;
-  padding: 4px 12px;
+  padding: 5px 14px;
   background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 4px;
+  border-radius: 6px;
   color: var(--text-tertiary);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s ease;
 }
-.copy-btn:hover { color: var(--text-primary); border-color: var(--border-strong); }
-.copy-btn.copied { color: var(--green); border-color: var(--green); }
+.copy-btn:hover { color: var(--text-primary); border-color: var(--border-strong); background: var(--bg-hover); }
+.copy-btn.copied { color: var(--green); border-color: var(--green); background: #f0fdf4; }
 
 .output-block-body {
   padding: 24px;
@@ -430,26 +435,7 @@ kbd {
   border-radius: 50%;
   background: var(--text-tertiary);
 }
-.skill-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.skill-tag {
-  display: inline-block;
-  padding: 4px 12px;
-  font-size: 13px;
-  font-weight: 500;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--text-primary);
-}
-.skill-tag.preferred {
-  background: transparent;
-  border-style: dashed;
-  color: var(--text-secondary);
-}
+/* skill-tags removed — skills now render as plain text lists */
 
 /* ── BOOLEAN STYLING ── */
 .bool-group {
@@ -739,36 +725,36 @@ function renderCleanJD(jd) {
   if (jd.required_skills && jd.required_skills.length) {
     h += '<div class="jd-section">';
     h += '<div class="jd-section-title">Required Skills</div>';
-    h += '<div class="skill-tags">';
-    jd.required_skills.forEach(function(s) { h += '<span class="skill-tag">' + esc(s) + '</span>'; });
-    h += '</div></div>';
+    h += '<ul class="jd-list">';
+    jd.required_skills.forEach(function(s) { h += '<li>' + esc(s) + '</li>'; });
+    h += '</ul></div>';
   }
 
   // Preferred Skills
   if (jd.preferred_skills && jd.preferred_skills.length) {
     h += '<div class="jd-section">';
     h += '<div class="jd-section-title">Preferred Skills</div>';
-    h += '<div class="skill-tags">';
-    jd.preferred_skills.forEach(function(s) { h += '<span class="skill-tag preferred">' + esc(s) + '</span>'; });
-    h += '</div></div>';
+    h += '<ul class="jd-list">';
+    jd.preferred_skills.forEach(function(s) { h += '<li>' + esc(s) + '</li>'; });
+    h += '</ul></div>';
   }
 
   // Certs
   if (jd.certifications && jd.certifications.length) {
     h += '<div class="jd-section">';
     h += '<div class="jd-section-title">Certifications</div>';
-    h += '<div class="skill-tags">';
-    jd.certifications.forEach(function(s) { h += '<span class="skill-tag">' + esc(s) + '</span>'; });
-    h += '</div></div>';
+    h += '<ul class="jd-list">';
+    jd.certifications.forEach(function(s) { h += '<li>' + esc(s) + '</li>'; });
+    h += '</ul></div>';
   }
 
   // Tools
   if (jd.tools && jd.tools.length) {
     h += '<div class="jd-section">';
-    h += '<div class="jd-section-title">Tools &amp; Technologies</div>';
-    h += '<div class="skill-tags">';
-    jd.tools.forEach(function(s) { h += '<span class="skill-tag">' + esc(s) + '</span>'; });
-    h += '</div></div>';
+    h += '<div class="jd-section-title">Tools & Technologies</div>';
+    h += '<ul class="jd-list">';
+    jd.tools.forEach(function(s) { h += '<li>' + esc(s) + '</li>'; });
+    h += '</ul></div>';
   }
 
   return h;
