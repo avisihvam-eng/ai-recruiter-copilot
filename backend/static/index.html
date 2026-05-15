@@ -103,19 +103,43 @@ body {
   margin: 0 auto 48px;
 }
 .page-title {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.2;
-  margin-bottom: 8px;
+  line-height: 1.25;
+  margin-bottom: 12px;
   color: var(--text-primary);
 }
 .page-sub {
   font-size: 15px;
-  color: var(--text-tertiary);
-  line-height: 1.5;
-  margin-bottom: 32px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
   font-weight: 400;
+}
+.output-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.output-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+.output-chip .chip-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
 }
 
 .textarea-wrapper {
@@ -185,18 +209,18 @@ kbd {
   background: var(--text-primary);
   color: white;
   border: none;
-  padding: 10px 24px;
+  padding: 11px 28px;
   font-family: var(--font-sans);
   font-size: 13px;
   font-weight: 600;
   border-radius: var(--radius);
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: all 0.2s ease;
   letter-spacing: 0.01em;
 }
-.run-btn:hover { background: #333; }
-.run-btn:active { transform: scale(0.98); }
-.run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.run-btn:hover { background: #333; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-1px); }
+.run-btn:active { transform: translateY(0) scale(0.98); box-shadow: none; }
+.run-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
 .run-btn svg {
   width: 16px;
   height: 16px;
@@ -535,22 +559,29 @@ kbd {
 
   <!-- INPUT -->
   <div class="input-section">
-    <h1 class="page-title">Paste a job description</h1>
-    <p class="page-sub">Drop a raw JD and the pipeline returns four structured outputs: clean JD, Boolean strings, outreach copy, and a LinkedIn post.</p>
+    <h1 class="page-title">Drop a raw JD. Get four recruiter-ready outputs.</h1>
+    <p class="page-sub">Paste any job description and two AI agents will clean it up, generate Boolean search strings, write outreach messages, and draft a LinkedIn hiring post — all in one click.</p>
+
+    <div class="output-chips">
+      <span class="output-chip"><span class="chip-num">01</span> Clean JD</span>
+      <span class="output-chip"><span class="chip-num">02</span> Boolean Strings</span>
+      <span class="output-chip"><span class="chip-num">03</span> Outreach Copy</span>
+      <span class="output-chip"><span class="chip-num">04</span> LinkedIn Post</span>
+    </div>
 
     <div class="textarea-label">
       <span>Raw job description</span>
       <span id="counter">0 chars</span>
     </div>
     <div class="textarea-wrapper">
-      <textarea id="jd-input" rows="8" placeholder="Paste the full JD here — hiring manager draft, careers page, email, whatever you have. The pipeline handles cleanup."></textarea>
+      <textarea id="jd-input" rows="8" placeholder="Paste a job description here — rough draft from a hiring manager, a careers page listing, an email, anything. The agents will structure it."></textarea>
     </div>
     <div class="error-bar" id="error-bar"></div>
     <div class="action-row">
       <span class="kbd-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run</span>
       <button class="run-btn" id="run-btn" onclick="runPipeline()">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2l10 6-10 6V2z"/></svg>
-        <span id="btn-label">Run pipeline</span>
+        <span id="btn-label">Run Agents</span>
       </button>
     </div>
   </div>
@@ -876,7 +907,7 @@ async function runPipeline() {
 
   // Reset button
   btn.disabled = false;
-  label.textContent = 'Run pipeline';
+  label.textContent = 'Run Agents';
 }
 </script>
 </body>
