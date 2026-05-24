@@ -17,10 +17,19 @@ STRUCTURED JD DATA:
 Using that data, generate a SINGLE valid JSON object (no markdown, no code blocks, just raw JSON):
 
 {
-  "outreach_short": "Short outreach message — under 80 words. Direct, personalized, focused on candidate benefit. No fluff.",
-  "outreach_detailed": "Detailed outreach message — under 150 words. Include role context, team, opportunity. Professional but warm. Not salesy.",
+  "outreach_short": "Short outreach message — under 80 words. See rules below.",
+  "outreach_detailed": "Detailed outreach message — under 150 words. See rules below.",
   "linkedin_post": "Full LinkedIn hiring post following the exact format below."
 }
+
+OUTREACH_RULES — follow exactly:
+- ALWAYS open both messages with exactly: Hi %FIRSTNAME%,
+  (This is LinkedIn Recruiter's native personalization token. Do not change it, do not use [Candidate Name] or any bracket placeholder.)
+- Short outreach: under 80 words. One sentence on the role, one on why their background fits, one CTA. Punchy. No filler.
+- Detailed outreach: under 150 words. Role + team context, 1-2 specific skills from the JD, clear CTA. Warm but professional.
+- NEVER use phrases like "exciting opportunity", "fast-paced environment", "I came across your profile", or "hope this finds you well"
+- Reference actual skills and role details from the JD — do not leave any [bracket placeholders] in the output
+- Sound like a real recruiter writing to a real person
 
 LINKEDIN POST FORMAT (use exactly this structure, fill in from JD data):
 
@@ -40,12 +49,9 @@ If this sounds like you or someone in your network, feel free to reach out.
 
 Let's connect.
 
-OUTREACH RULES:
-- Short outreach: under 80 words, punchy, direct, high response rate
-- Detailed outreach: under 150 words, warm but professional, not salesy
-- LinkedIn post: use emoji, bullet points, exactly the format above
-- Do NOT use generic phrases like "exciting opportunity" or "fast-paced environment"
-- Sound like a real recruiter, not a template
+LinkedIn post rules:
+- Use emoji, bullet points, exactly the format above
+- Fill in real skills from the JD — no bracket placeholders in the final output
 
 Return ONLY the JSON. No explanation. No markdown.
 """

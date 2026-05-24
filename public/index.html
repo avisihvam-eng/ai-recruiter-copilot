@@ -4,22 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Recruiter Copilot</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #ffffff;
-  --bg-secondary: #f8f8f7;
-  --bg-hover: #f3f3f2;
-  --text-primary: #1a1a1a;
-  --text-secondary: #4a4a4a;
-  --text-tertiary: #8b8b8b;
-  --border: #e8e8e6;
-  --border-strong: #d4d4d2;
-  --accent: #1a1a1a;
-  --accent-light: #f0f0ee;
+  --bg: #fefcf9;
+  --bg-secondary: #f7f4ef;
+  --bg-hover: #f0ece5;
+  --text-primary: #1c1917;
+  --text-secondary: #57534e;
+  --text-tertiary: #a8a29e;
+  --border: #e7e5e0;
+  --border-strong: #d4cfc8;
+  --accent: #1c1917;
+  --accent-light: #f0ece5;
   --green: #1a7f37;
   --blue: #0969da;
+  --linkedin: #0077b5;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
   --radius: 10px;
 }
@@ -35,168 +37,100 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── HEADER ── */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 32px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.logo {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-}
-.badge {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  padding: 3px 8px;
-  background: var(--accent-light);
-  color: var(--text-secondary);
-  border-radius: 4px;
-  letter-spacing: 0.02em;
-}
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.status-dot {
-  width: 7px;
-  height: 7px;
-  background: var(--green);
-  border-radius: 50%;
-  animation: pulse 2.5s infinite;
-}
-@keyframes pulse {
-  0%,100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-.status-text {
-  font-size: 12px;
-  color: var(--text-tertiary);
-  font-weight: 500;
-}
-
 /* ── MAIN LAYOUT ── */
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 48px 32px 80px;
+  padding: 64px 32px 80px;
 }
 
 /* ── INPUT SECTION ── */
 .input-section {
   max-width: 720px;
-  margin: 0 auto 48px;
+  margin: 40px auto 48px;
 }
 .page-title {
-  font-size: 30px;
+  font-family: var(--font-sans);
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.25;
-  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 8px;
   color: var(--text-primary);
+  text-align: center;
 }
 .page-sub {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 16px;
-  font-weight: 400;
-}
-.output-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  line-height: 1.5;
   margin-bottom: 32px;
+  font-weight: 400;
+  text-align: center;
 }
-.output-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  background: var(--bg-secondary);
+.editor-card {
+  background: #ffffff;
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(28,25,23,0.02), 0 6px 20px rgba(28,25,23,0.03);
+  padding: 20px 24px;
+  transition: all 0.25s ease;
 }
-.output-chip .chip-num {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-tertiary);
-}
-
-.textarea-wrapper {
-  position: relative;
-  margin-bottom: 16px;
-}
-.textarea-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-.textarea-label span {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.editor-card:focus-within {
+  border-color: var(--border-strong);
+  box-shadow: 0 2px 8px rgba(28,25,23,0.04), 0 10px 30px rgba(28,25,23,0.06);
 }
 textarea {
   width: 100%;
-  min-height: 180px;
+  min-height: 160px;
   font-family: var(--font-sans);
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.65;
   color: var(--text-primary);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
+  background: transparent;
+  border: none;
   resize: vertical;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  padding: 0;
+  margin-bottom: 16px;
 }
 textarea::placeholder {
   color: var(--text-tertiary);
-  font-style: normal;
 }
-textarea:focus {
-  border-color: var(--text-primary);
-  box-shadow: 0 0 0 3px rgba(17,17,17,0.06);
-}
-
 .action-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.action-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#counter {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+.action-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 .kbd-hint {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-tertiary);
 }
 kbd {
   display: inline-block;
-  padding: 2px 6px;
+  padding: 2px 5px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: 4px;
@@ -205,37 +139,35 @@ kbd {
 .run-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: var(--text-primary);
   color: white;
   border: none;
-  padding: 11px 28px;
+  padding: 8px 20px;
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
-  border-radius: var(--radius);
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  letter-spacing: 0.01em;
 }
-.run-btn:hover { background: #333; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-1px); }
-.run-btn:active { transform: translateY(0) scale(0.98); box-shadow: none; }
-.run-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+.run-btn:hover { background: #333; transform: translateY(-0.5px); }
+.run-btn:active { transform: translateY(0); }
+.run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .run-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   fill: currentColor;
 }
-
 .error-bar {
   display: none;
   background: #fef2f2;
   border: 1px solid #fecaca;
-  padding: 12px 16px;
+  padding: 10px 14px;
   font-size: 13px;
   color: #991b1b;
-  border-radius: var(--radius);
-  margin-top: 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
 }
 
 /* ── PIPELINE STATUS ── */
@@ -258,9 +190,10 @@ kbd {
   display: flex;
   align-items: center;
   gap: 8px;
-  opacity: 0.3;
-  transition: opacity 0.4s ease;
+  opacity: 0.28;
+  transition: opacity 0.5s ease;
 }
+.pipe-step.active { opacity: 0.7; }
 .pipe-step.done { opacity: 1; }
 .pipe-step-dot {
   width: 20px;
@@ -270,12 +203,23 @@ kbd {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s, border-color 0.3s;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
   flex-shrink: 0;
+}
+.pipe-step.active .pipe-step-dot {
+  border-color: var(--text-secondary);
+  box-shadow: 0 0 0 3px rgba(28,25,23,0.08);
+  animation: dotPulse 1.2s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%,100% { box-shadow: 0 0 0 3px rgba(28,25,23,0.08); }
+  50% { box-shadow: 0 0 0 6px rgba(28,25,23,0.03); }
 }
 .pipe-step.done .pipe-step-dot {
   background: var(--text-primary);
   border-color: var(--text-primary);
+  box-shadow: none;
+  animation: none;
 }
 .pipe-step.done .pipe-step-dot::after {
   content: "";
@@ -294,10 +238,11 @@ kbd {
 }
 .pipe-connector {
   flex: 1;
-  height: 2px;
+  height: 1px;
   background: var(--border);
   margin: 0 6px;
   min-width: 20px;
+  transition: background 0.4s;
 }
 .pipe-step.done + .pipe-connector { background: var(--text-primary); }
 
@@ -308,6 +253,15 @@ kbd {
   margin: 0 auto;
 }
 #output-section.visible { display: block; }
+
+/* Card entrance animation */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.output-block.animate-in {
+  animation: cardIn 0.35s ease forwards;
+}
 
 .output-block {
   margin-bottom: 28px;
@@ -325,24 +279,27 @@ kbd {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 20px;
+  padding: 13px 20px;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
 }
+.output-block-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  letter-spacing: 0.08em;
+  margin-right: 2px;
+}
 .output-block-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 8px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.output-block-title .icon {
-  width: 16px;
-  height: 16px;
-  opacity: 0.5;
+  letter-spacing: 0.05em;
 }
 .copy-btn {
   font-family: var(--font-sans);
@@ -355,9 +312,13 @@ kbd {
   color: var(--text-tertiary);
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 62px;
+  text-align: center;
 }
 .copy-btn:hover { color: var(--text-primary); border-color: var(--border-strong); background: var(--bg-hover); }
 .copy-btn.copied { color: var(--green); border-color: var(--green); background: #f0fdf4; }
+/* LinkedIn block distinct accent */
+.output-block.linkedin-block { border-left: 3px solid rgba(0,119,181,0.18); }
 
 .output-block-body {
   padding: 24px;
@@ -535,46 +496,30 @@ kbd {
 </head>
 <body>
 
-<!-- HEADER -->
-<header class="header">
-  <div class="header-left">
-    <span class="logo">Recruiter Copilot</span>
-    <span class="badge">ADK v0.4</span>
-  </div>
-  <div class="header-right">
-    <div class="status-dot"></div>
-    <span class="status-text">Gemini 2.5 Flash</span>
-  </div>
-</header>
-
 <div class="container">
 
   <!-- INPUT -->
   <div class="input-section">
-    <h1 class="page-title">Drop a raw JD. Get four recruiter-ready outputs.</h1>
-    <p class="page-sub">Paste any job description and two AI agents will clean it up, generate Boolean search strings, write outreach messages, and draft a LinkedIn hiring post — all in one click.</p>
+    <h1 class="page-title">Recruiter Copilot</h1>
+    <p class="page-sub">Turn raw job descriptions into formatted JDs, Booleans, outreach templates, and social posts.</p>
 
-    <div class="output-chips">
-      <span class="output-chip"><span class="chip-num">01</span> Clean JD</span>
-      <span class="output-chip"><span class="chip-num">02</span> Boolean Strings</span>
-      <span class="output-chip"><span class="chip-num">03</span> Outreach Copy</span>
-      <span class="output-chip"><span class="chip-num">04</span> LinkedIn Post</span>
-    </div>
-
-    <div class="textarea-label">
-      <span>Raw job description</span>
-      <span id="counter">0 chars</span>
-    </div>
-    <div class="textarea-wrapper">
-      <textarea id="jd-input" rows="8" placeholder="Paste a job description here — rough draft from a hiring manager, a careers page listing, an email, anything. The agents will structure it."></textarea>
-    </div>
-    <div class="error-bar" id="error-bar"></div>
-    <div class="action-row">
-      <span class="kbd-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run</span>
-      <button class="run-btn" id="run-btn" onclick="runPipeline()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2l10 6-10 6V2z"/></svg>
-        <span id="btn-label">Run Agents</span>
-      </button>
+    <div class="editor-card">
+      <textarea id="jd-input" placeholder="Paste a raw job description here... (e.g. rough drafts, careers page URLs, raw text)"></textarea>
+      
+      <div class="error-bar" id="error-bar"></div>
+      
+      <div class="action-row">
+        <div class="action-left">
+          <span id="counter">0 chars</span>
+        </div>
+        <div class="action-right">
+          <span class="kbd-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run</span>
+          <button class="run-btn" id="run-btn" onclick="runPipeline()">
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2l10 6-10 6V2z"/></svg>
+            <span id="btn-label">Run Agents</span>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -612,9 +557,9 @@ kbd {
   <div id="output-section">
 
     <!-- CLEAN JD -->
-    <div class="output-block">
+    <div class="output-block" id="block-jd">
       <div class="output-block-header">
-        <span class="output-block-title">Clean Job Description</span>
+        <span class="output-block-title"><span class="output-block-num">01&nbsp;&nbsp;</span>Clean Job Description</span>
         <button class="copy-btn" onclick="copyBlock('jd-body', this)">Copy</button>
       </div>
       <div class="output-block-body" id="jd-body">
@@ -623,9 +568,9 @@ kbd {
     </div>
 
     <!-- BOOLEAN -->
-    <div class="output-block">
+    <div class="output-block" id="block-bool">
       <div class="output-block-header">
-        <span class="output-block-title">Boolean Search Strings</span>
+        <span class="output-block-title"><span class="output-block-num">02&nbsp;&nbsp;</span>Boolean Search Strings</span>
         <button class="copy-btn" onclick="copyBlock('bool-body', this)">Copy</button>
       </div>
       <div class="output-block-body" id="bool-body">
@@ -634,9 +579,9 @@ kbd {
     </div>
 
     <!-- OUTREACH -->
-    <div class="output-block">
+    <div class="output-block" id="block-outreach">
       <div class="output-block-header">
-        <span class="output-block-title">Outreach Messages</span>
+        <span class="output-block-title"><span class="output-block-num">03&nbsp;&nbsp;</span>Outreach Messages</span>
         <button class="copy-btn" onclick="copyBlock('outreach-body', this)">Copy</button>
       </div>
       <div class="output-block-body" id="outreach-body">
@@ -645,9 +590,9 @@ kbd {
     </div>
 
     <!-- LINKEDIN -->
-    <div class="output-block">
+    <div class="output-block linkedin-block" id="block-linkedin">
       <div class="output-block-header">
-        <span class="output-block-title">LinkedIn Post</span>
+        <span class="output-block-title"><span class="output-block-num">04&nbsp;&nbsp;</span>LinkedIn Post</span>
         <button class="copy-btn" onclick="copyBlock('linkedin-body', this)">Copy</button>
       </div>
       <div class="output-block-body" id="linkedin-body">
@@ -671,9 +616,30 @@ kbd {
 <script>
 const API = '/api/generate';
 
-// ── Character counter ──
+// ── Auto-focus textarea ──
+document.addEventListener('DOMContentLoaded', function() {
+  var ta = document.getElementById('jd-input');
+  // Restore from localStorage
+  var saved = localStorage.getItem('rc_last_jd');
+  if (saved) { ta.value = saved; updateCounter(ta); }
+  ta.focus();
+});
+
+// ── Character counter + ready signal ──
+function updateCounter(ta) {
+  var n = ta.value.length;
+  var el = document.getElementById('counter');
+  if (n >= 150) {
+    el.textContent = '✓ Ready to run';
+    el.style.color = 'var(--green)';
+  } else {
+    el.textContent = n + ' chars';
+    el.style.color = '';
+  }
+}
 document.getElementById('jd-input').addEventListener('input', function() {
-  document.getElementById('counter').textContent = this.value.length + ' chars';
+  updateCounter(this);
+  localStorage.setItem('rc_last_jd', this.value);
 });
 
 // ── Ctrl+Enter ──
@@ -681,13 +647,13 @@ document.addEventListener('keydown', function(e) {
   if (e.ctrlKey && e.key === 'Enter') runPipeline();
 });
 
-// ── Copy ──
+// ── Copy with checkmark ──
 function copyBlock(id, btn) {
   var el = document.getElementById(id);
   navigator.clipboard.writeText(el.innerText).then(function() {
-    btn.textContent = 'Copied';
+    btn.textContent = '✓ Copied';
     btn.classList.add('copied');
-    setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1400);
+    setTimeout(function() { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600);
   });
 }
 
@@ -841,12 +807,16 @@ async function runPipeline() {
   // Smooth scroll to pipeline bar
   pBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Animate steps during API call
+  // Animate pipeline steps with active pulse
+  function activateStep(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  }
   var timers = [
-    setTimeout(function() { lightStep('ps2'); }, 500),
-    setTimeout(function() { lightStep('ps3'); }, 1200),
-    setTimeout(function() { lightStep('ps4'); }, 2000),
-    setTimeout(function() { lightStep('ps5'); }, 3000),
+    setTimeout(function() { activateStep('ps2'); }, 300),
+    setTimeout(function() { lightStep('ps2'); activateStep('ps3'); }, 800),
+    setTimeout(function() { lightStep('ps3'); activateStep('ps4'); }, 1800),
+    setTimeout(function() { lightStep('ps4'); activateStep('ps5'); }, 2800),
   ];
 
   try {
@@ -865,16 +835,30 @@ async function runPipeline() {
 
     // Complete all steps
     timers.forEach(clearTimeout);
-    ['ps2','ps3','ps4','ps5'].forEach(lightStep);
+    ['ps2','ps3','ps4','ps5'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.classList.remove('active'); el.classList.add('done'); }
+    });
 
-    // Render rich HTML output
-    document.getElementById('jd-body').innerHTML = renderCleanJD(data.clean_jd);
-    document.getElementById('bool-body').innerHTML = renderBooleans(data.booleans);
-    document.getElementById('outreach-body').innerHTML = renderOutreach(data.outreach);
-    document.getElementById('linkedin-body').innerHTML = renderLinkedIn(data.linkedin_post);
+    // Render output blocks with staggered fade-in
+    var blocks = [
+      { bodyId: 'jd-body',       blockId: 'block-jd',       html: renderCleanJD(data.clean_jd) },
+      { bodyId: 'bool-body',     blockId: 'block-bool',     html: renderBooleans(data.booleans) },
+      { bodyId: 'outreach-body', blockId: 'block-outreach', html: renderOutreach(data.outreach) },
+      { bodyId: 'linkedin-body', blockId: 'block-linkedin', html: renderLinkedIn(data.linkedin_post) },
+    ];
+    blocks.forEach(function(b, i) {
+      setTimeout(function() {
+        document.getElementById(b.bodyId).innerHTML = b.html;
+        var block = document.getElementById(b.blockId);
+        if (block) { block.classList.add('animate-in'); }
+      }, i * 120);
+    });
 
     // Scroll to first output block
-    document.querySelector('.output-block').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function() {
+      document.querySelector('.output-block').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
 
   } catch(e) {
     timers.forEach(clearTimeout);

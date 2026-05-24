@@ -7,8 +7,9 @@ import json
 import os
 import re
 from dotenv import load_dotenv
-
-load_dotenv()
+from pathlib import Path
+env_path = Path(__file__).parent.parent / ".env"
+load_dotenv(dotenv_path=env_path, override=True)
 
 from google.adk.agents import SequentialAgent
 from google.adk.runners import Runner
@@ -125,6 +126,24 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
     if "duties" in clean_jd and "responsibilities" not in clean_jd:
         clean_jd["responsibilities"] = clean_jd.pop("duties")
 
+    short_outreach = outreach_data.get("outreach_short", "")
+    detailed_outreach = outreach_data.get("outreach_detailed", "")
+
+    # Clean up any candidate name placeholder variations to %FIRSTNAME%
+    name_patterns = [
+        r"Hi\s+\[?Candidate(?:\s+Name)?\]?,?",
+        r"Hi\s+\[?First\s+Name\]?,?",
+        r"Hi\s+\[?Name\]?,?",
+    ]
+    for pattern in name_patterns:
+        short_outreach = re.sub(pattern, "Hi %FIRSTNAME%,", short_outreach, flags=re.IGNORECASE)
+        detailed_outreach = re.sub(pattern, "Hi %FIRSTNAME%,", detailed_outreach, flags=re.IGNORECASE)
+
+    # Standard string replacement for other curly/bracket types
+    for key in ["[Candidate Name]", "[Candidate's Name]", "{{firstName}}", "{{first_name}}", "{{ firstName }}", "%first_name%"]:
+        short_outreach = short_outreach.replace(key, "%FIRSTNAME%")
+        detailed_outreach = detailed_outreach.replace(key, "%FIRSTNAME%")
+
     return {
         "clean_jd": clean_jd,
         "booleans": {
@@ -133,8 +152,8 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
             "broad": jd_data.get("boolean_broad", ""),
         },
         "outreach": {
-            "short": outreach_data.get("outreach_short", ""),
-            "detailed": outreach_data.get("outreach_detailed", ""),
+            "short": short_outreach,
+            "detailed": detailed_outreach,
         },
         "linkedin_post": outreach_data.get("linkedin_post", ""),
     }

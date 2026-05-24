@@ -4,10 +4,11 @@ Run with: uvicorn backend.main:app --reload --port 8000
 """
 
 from dotenv import load_dotenv
-load_dotenv()
+from pathlib import Path
+env_path = Path(__file__).parent / ".env"
+load_dotenv(dotenv_path=env_path, override=True)
 
 import os
-from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
