@@ -8,7 +8,7 @@ from google.adk.agents import LlmAgent
 JD_BOOLEAN_PROMPT = """
 You are an expert technical recruiter with 10+ years of sourcing experience.
 
-You will receive a raw job description in the variable below:
+You will receive a raw job description below:
 
 RAW JD:
 {raw_jd}
@@ -19,35 +19,40 @@ The JSON must match this exact structure:
 {
   "clean_jd": {
     "title": "Job title extracted from JD",
-    "location": "Location or Remote",
+    "location": "City, State or Remote",
     "experience": "e.g. 5-8 years",
-    "summary": "2-3 sentence role summary written in clear, professional language",
-    "responsibilities": ["responsibility 1", "responsibility 2", "responsibility 3"],
-    "required_skills": ["skill1", "skill2", "skill3"],
-    "preferred_skills": ["skill1", "skill2"],
-    "certifications": ["cert1", "cert2"],
-    "tools": ["tool1", "tool2"]
+    "objective": "2-3 sentence paragraph. What this person does, the environment they work in, and the value they deliver. Professional, human-readable. No bullet points.",
+    "responsibilities": [
+      "Begin each with an action verb. Keep to one focused idea per bullet. 4-6 items max."
+    ],
+    "required_skills": [
+      "Each item is a full descriptive sentence: state the skill, the expected proficiency level, and any relevant context from the JD. Not bare keywords. 5-8 items."
+    ],
+    "preferred_skills": [
+      "Each item is a full descriptive sentence describing a nice-to-have skill with context. If the JD does not explicitly list preferred skills, infer 2-3 from adjacent domain knowledge (e.g. industry exposure, soft skills, certifications). 2-4 items."
+    ]
   },
-  "boolean_strict": "Strict Boolean — only must-have skills, tight match. Example: (Python OR Java) AND (AWS OR GCP) AND (Kubernetes OR Docker)",
-  "boolean_balanced": "Balanced Boolean — core skills + some flexibility. Broader than strict.",
-  "boolean_broad": "Broad Boolean — cast wide net, good for passive candidates. Include adjacent skills."
+  "boolean_strict": "Tight Boolean using only must-have hard skills. Under 60 words. Use (A OR B) AND (C OR D) format. No filler words.",
+  "boolean_balanced": "Balanced Boolean — core skills with some flexibility. Under 60 words.",
+  "boolean_broad": "Broad Boolean to surface passive candidates. Include adjacent skills. Under 60 words."
 }
 
-IMPORTANT:
-- "responsibilities" should contain 4-8 clear, actionable job duties. Each one should be a full sentence.
-- "required_skills" should list the absolute must-have technical skills (5-10 items).
-- "preferred_skills" should list nice-to-have skills that are not strictly required (3-6 items).
+CRITICAL FORMATTING RULES:
+1. "objective" — exactly 2-3 sentences. Do NOT use bullet points. Write like a human, not a job board.
+2. "responsibilities" — 4-6 items. Each starts with a strong action verb (Monitor, Build, Collaborate, etc). One idea per bullet. Do not pad.
+3. "required_skills" — NEVER use bare keywords like "Python" or "SQL". Each item MUST be a complete sentence that names the skill AND describes the expected proficiency or use case from the JD. Example: "Hands-on experience with Python or PowerShell for monitoring automation and configuration scripting tasks."
+4. "preferred_skills" — same sentence format as required_skills. If not stated in JD, intelligently infer 2-3 based on the role and domain.
+5. Overall length: balanced. Structured. Not a wall of text. Every word must earn its place.
 
-BOOLEAN RULES (follow strictly):
-- Keep each Boolean under 60 words
-- Use OR inside parentheses for synonyms: (React OR Vue OR Angular)
+BOOLEAN RULES:
+- Keep each under 60 words
+- Use OR inside parentheses for synonyms: (ServiceNow OR Remedy OR Jira)
 - Use AND to connect skill groups
-- Group certs separately: (AWS Certified OR GCP Professional OR Azure)
-- No filler words (e.g. "experience", "years", "strong")
-- Copy-paste ready for JobDiva ATS
+- No filler words (no "experience with", "knowledge of", "years of")
+- Copy-paste ready for LinkedIn Recruiter or JobDiva ATS
 - Strict = tightest match, Broad = most candidates
 
-Return ONLY the JSON. No explanation. No markdown formatting.
+Return ONLY the JSON. No explanation. No markdown. No code fences.
 """
 
 
@@ -56,5 +61,5 @@ jd_boolean_agent = LlmAgent(
     model="gemini-2.5-flash",
     instruction=JD_BOOLEAN_PROMPT,
     output_key="jd_boolean_output",
-    description="Cleans a raw JD and generates Strict, Balanced, and Broad Boolean search strings.",
+    description="Cleans a raw JD into four structured sections and generates Boolean search strings.",
 )
