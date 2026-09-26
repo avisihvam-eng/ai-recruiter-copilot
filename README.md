@@ -1,6 +1,6 @@
 # AI Recruiter Copilot
 
-A minimal 2-agent recruiter workflow powered by **Google ADK** + **Gemini 2.5 Flash**.
+A four-agent recruiter workflow powered by **Google ADK** + **Gemini 2.5 Flash**.
 
 Paste a raw job description → get a clean JD, Boolean search strings, outreach copy, and a LinkedIn hiring post in one run.
 
@@ -11,11 +11,17 @@ Paste a raw job description → get a clean JD, Boolean search strings, outreach
 ```
 User pastes JD → FastAPI → ADK SequentialAgent
 
-  Agent 1 · jd_boolean_agent
-    Cleans JD → extracts skills/certs/tools → Strict / Balanced / Broad Booleans
+  Agent 1 · role_brief_agent
+    Creates a separate recruiter brief while preserving the submitted JD unchanged
 
-  Agent 2 · outreach_linkedin_agent
-    Reads Agent 1 output → Short outreach · Detailed outreach · LinkedIn post
+  Agent 2 · sourcing_strategy_agent
+    Builds Strict / Balanced / Broad Boolean searches
+
+  Agent 3 · outreach_linkedin_agent
+    Writes short outreach · detailed outreach · LinkedIn post
+
+  Agent 4 · recruiter_advisor_agent
+    Produces screening questions and intake watch-outs
 ```
 
 ## Stack
@@ -36,7 +42,7 @@ echo "GOOGLE_API_KEY=your_key_here" > backend/.env
 uvicorn backend.main:app --port 8000
 ```
 
-Open **http://localhost:8000** — paste a JD, click **Run Agents**.
+Open **http://localhost:8000** — paste a JD, then click **Build my recruiting plan**.
 
 ## Get a Gemini API Key
 

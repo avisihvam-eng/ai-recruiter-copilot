@@ -20,6 +20,7 @@ class GenerateResponse(BaseModel):
     booleans: dict
     outreach: dict
     linkedin_post: str
+    recruiter_brief: dict
 
 
 @router.get("/health")

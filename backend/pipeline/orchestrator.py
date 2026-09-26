@@ -18,13 +18,15 @@ from google.genai import types
 
 from backend.agents.jd_boolean_agent import jd_boolean_agent
 from backend.agents.outreach_linkedin_agent import outreach_linkedin_agent
+from backend.agents.recruiter_advisor_agent import recruiter_advisor_agent
+from backend.agents.sourcing_strategy_agent import sourcing_strategy_agent
 
 # ── Pipeline assembly ──────────────────────────────────────────────────────────
 
 recruiter_pipeline = SequentialAgent(
     name="recruiter_pipeline",
-    sub_agents=[jd_boolean_agent, outreach_linkedin_agent],
-    description="Runs JD cleanup + Boolean generation, then Outreach + LinkedIn post generation.",
+    sub_agents=[jd_boolean_agent, sourcing_strategy_agent, outreach_linkedin_agent, recruiter_advisor_agent],
+    description="Runs recruiter brief, sourcing strategy, candidate engagement, and recruiter decision support.",
 )
 
 # Singleton session service (in-memory, stateless per request)
@@ -57,7 +59,7 @@ def _extract_json(text: str) -> dict:
 
 async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
     """
-    Run the full 2-agent recruiter pipeline for a given raw JD.
+    Run the recruiter pipeline for a given raw JD.
 
     Args:
         raw_jd:  The raw job description text pasted by the user.
@@ -118,8 +120,16 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
     jd_data = _extract_json(jd_raw) if isinstance(jd_raw, str) else jd_raw
 
     # Parse Agent 2 output
+    sourcing_raw = state.get("sourcing_strategy_output", "{}")
+    sourcing_data = _extract_json(sourcing_raw) if isinstance(sourcing_raw, str) else sourcing_raw
+
+    # Parse Agent 3 output
     outreach_raw = state.get("outreach_output", "{}")
     outreach_data = _extract_json(outreach_raw) if isinstance(outreach_raw, str) else outreach_raw
+
+    # Parse Agent 4 output
+    advisor_raw = state.get("recruiter_advisor_output", "{}")
+    advisor_data = _extract_json(advisor_raw) if isinstance(advisor_raw, str) else advisor_raw
 
     clean_jd = jd_data.get("clean_jd", {})
     # Normalize: accept both "duties" and "responsibilities" from the LLM
@@ -147,13 +157,14 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
     return {
         "clean_jd": clean_jd,
         "booleans": {
-            "strict": jd_data.get("boolean_strict", ""),
-            "balanced": jd_data.get("boolean_balanced", ""),
-            "broad": jd_data.get("boolean_broad", ""),
+            "strict": sourcing_data.get("boolean_strict", ""),
+            "balanced": sourcing_data.get("boolean_balanced", ""),
+            "broad": sourcing_data.get("boolean_broad", ""),
         },
         "outreach": {
             "short": short_outreach,
             "detailed": detailed_outreach,
         },
         "linkedin_post": outreach_data.get("linkedin_post", ""),
+        "recruiter_brief": advisor_data,
     }
