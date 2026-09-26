@@ -15,7 +15,7 @@
   --text-tertiary: #a8a29e;
   --border: #e7e5e0;
   --border-strong: #d4cfc8;
-  --accent: #1c1917;
+  --accent: #294a3a;
   --accent-light: #f0ece5;
   --green: #1a7f37;
   --blue: #0969da;
@@ -39,7 +39,7 @@ body {
 
 /* ── MAIN LAYOUT ── */
 .container {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 64px 32px 80px;
 }
@@ -50,8 +50,8 @@ body {
   margin: 40px auto 48px;
 }
 .page-title {
-  font-family: var(--font-sans);
-  font-size: 26px;
+  font-family: var(--font-serif);
+  font-size: 42px;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -173,7 +173,7 @@ kbd {
 /* ── PIPELINE STATUS ── */
 .pipeline-bar {
   display: none;
-  max-width: 720px;
+  max-width: 920px;
   margin: 0 auto 40px;
   padding: 20px 24px;
   background: var(--bg-secondary);
@@ -181,6 +181,7 @@ kbd {
   border-radius: var(--radius);
 }
 .pipeline-bar.visible { display: block; }
+.pipeline-kicker { font-size:11px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.09em; font-weight:700; margin-bottom:14px; }
 .pipeline-steps {
   display: flex;
   align-items: center;
@@ -319,6 +320,14 @@ kbd {
 .copy-btn.copied { color: var(--green); border-color: var(--green); background: #f0fdf4; }
 /* LinkedIn block distinct accent */
 .output-block.linkedin-block { border-left: 3px solid rgba(0,119,181,0.18); }
+.output-block.advice-block { border-left: 3px solid rgba(41,74,58,.45); }
+.source-jd { white-space:pre-wrap; font-size:13px; line-height:1.75; color:var(--text-secondary); padding:16px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:7px; max-height:380px; overflow:auto; }
+.advice-grid { display:grid; grid-template-columns:1fr 1fr; gap:22px; }
+.advice-lead { font-size:15px; line-height:1.7; color:var(--text-secondary); margin-bottom:20px; }
+.advice-label { font-size:11px; color:var(--text-tertiary); font-weight:700; text-transform:uppercase; letter-spacing:.08em; margin-bottom:9px; }
+.advice-list { list-style:none; display:grid; gap:9px; }
+.advice-list li { font-size:13px; line-height:1.55; color:var(--text-secondary); padding-left:14px; position:relative; }
+.advice-list li::before { content:'•'; position:absolute; left:0; color:var(--accent); }
 
 .output-block-body {
   padding: 24px;
@@ -492,16 +501,29 @@ kbd {
   margin-left: 20px;
 }
 .footer a:hover { color: var(--text-primary); }
+.product-bar { max-width:1120px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding-bottom:36px; border-bottom:1px solid var(--border); }
+.brand { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700; letter-spacing:-.02em; }
+.brand-mark { width:28px; height:28px; border-radius:8px; display:grid; place-items:center; color:white; background:var(--accent); font-family:var(--font-serif); font-size:19px; }
+.brand-note { font-size:11px; color:var(--text-tertiary); font-weight:600; text-transform:uppercase; letter-spacing:.08em; }
+.preserve-note { display:flex; gap:8px; align-items:flex-start; margin:0 0 14px; padding:10px 12px; border-radius:7px; color:var(--text-secondary); background:#f4f7f3; font-size:12px; line-height:1.5; }
+.preserve-note strong { color:var(--accent); }
+@media (max-width:680px) { .container { padding:32px 16px 56px; } .product-bar { padding-bottom:24px; } .brand-note { display:none; } .page-title { font-size:34px; } .pipeline-steps { align-items:flex-start; flex-wrap:wrap; gap:12px 0; } .pipe-connector { display:none; } .pipe-step { width:50%; } .advice-grid { grid-template-columns:1fr; gap:18px; } }
 </style>
 </head>
 <body>
 
 <div class="container">
 
+  <header class="product-bar">
+    <div class="brand"><span class="brand-mark">r</span> Recruiter Copilot</div>
+    <span class="brand-note">Decision support for human recruiters</span>
+  </header>
+
   <!-- INPUT -->
   <div class="input-section">
-    <h1 class="page-title">Recruiter Copilot</h1>
-    <p class="page-sub">Turn raw job descriptions into formatted JDs, Booleans, outreach templates, and social posts.</p>
+    <h1 class="page-title">A sharper starting point<br>for every search.</h1>
+    <p class="page-sub">Turn one job description into a sourcing plan, candidate outreach, and an interview-ready recruiter brief.</p>
+    <div class="preserve-note"><span>✓</span><span><strong>Your JD stays untouched.</strong> We keep its wording and layout intact, then build separate recruiter-ready assets around it.</span></div>
 
     <div class="editor-card">
       <textarea id="jd-input" placeholder="Paste a raw job description here... (e.g. rough drafts, careers page URLs, raw text)"></textarea>
@@ -516,7 +538,7 @@ kbd {
           <span class="kbd-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run</span>
           <button class="run-btn" id="run-btn" onclick="runPipeline()">
             <svg viewBox="0 0 16 16" fill="currentColor"><path d="M4 2l10 6-10 6V2z"/></svg>
-            <span id="btn-label">Run Agents</span>
+            <span id="btn-label">Build my recruiting plan</span>
           </button>
         </div>
       </div>
@@ -525,6 +547,7 @@ kbd {
 
   <!-- PIPELINE BAR -->
   <div class="pipeline-bar" id="pipeline-bar">
+    <div class="pipeline-kicker">Four specialists are working on your search</div>
     <div class="pipeline-steps">
       <div class="pipe-step done" id="ps1">
         <div class="pipe-step-dot"></div>
@@ -533,22 +556,22 @@ kbd {
       <div class="pipe-connector"></div>
       <div class="pipe-step" id="ps2">
         <div class="pipe-step-dot"></div>
-        <span class="pipe-step-label">Clean JD</span>
+        <span class="pipe-step-label">1. Role brief</span>
       </div>
       <div class="pipe-connector"></div>
       <div class="pipe-step" id="ps3">
         <div class="pipe-step-dot"></div>
-        <span class="pipe-step-label">Boolean</span>
+        <span class="pipe-step-label">2. Search strategy</span>
       </div>
       <div class="pipe-connector"></div>
       <div class="pipe-step" id="ps4">
         <div class="pipe-step-dot"></div>
-        <span class="pipe-step-label">Outreach</span>
+        <span class="pipe-step-label">3. Candidate outreach</span>
       </div>
       <div class="pipe-connector"></div>
       <div class="pipe-step" id="ps5">
         <div class="pipe-step-dot"></div>
-        <span class="pipe-step-label">LinkedIn</span>
+        <span class="pipe-step-label">4. Recruiter prep</span>
       </div>
     </div>
   </div>
@@ -556,10 +579,18 @@ kbd {
   <!-- OUTPUT BLOCKS -->
   <div id="output-section">
 
+    <div class="output-block" id="block-source">
+      <div class="output-block-header">
+        <span class="output-block-title"><span class="output-block-num">SOURCE&nbsp;&nbsp;</span>Your job description</span>
+        <button class="copy-btn" onclick="copyBlock('source-body', this)">Copy</button>
+      </div>
+      <div class="output-block-body"><div class="source-jd" id="source-body"></div></div>
+    </div>
+
     <!-- CLEAN JD -->
     <div class="output-block" id="block-jd">
       <div class="output-block-header">
-        <span class="output-block-title"><span class="output-block-num">01&nbsp;&nbsp;</span>Clean Job Description</span>
+        <span class="output-block-title"><span class="output-block-num">01&nbsp;&nbsp;</span>Role brief</span>
         <button class="copy-btn" onclick="copyBlock('jd-body', this)">Copy</button>
       </div>
       <div class="output-block-body" id="jd-body">
@@ -570,7 +601,7 @@ kbd {
     <!-- BOOLEAN -->
     <div class="output-block" id="block-bool">
       <div class="output-block-header">
-        <span class="output-block-title"><span class="output-block-num">02&nbsp;&nbsp;</span>Boolean Search Strings</span>
+        <span class="output-block-title"><span class="output-block-num">02&nbsp;&nbsp;</span>Search strings</span>
         <button class="copy-btn" onclick="copyBlock('bool-body', this)">Copy</button>
       </div>
       <div class="output-block-body" id="bool-body">
@@ -581,7 +612,7 @@ kbd {
     <!-- OUTREACH -->
     <div class="output-block" id="block-outreach">
       <div class="output-block-header">
-        <span class="output-block-title"><span class="output-block-num">03&nbsp;&nbsp;</span>Outreach Messages</span>
+        <span class="output-block-title"><span class="output-block-num">03&nbsp;&nbsp;</span>Candidate outreach</span>
         <button class="copy-btn" onclick="copyBlock('outreach-body', this)">Copy</button>
       </div>
       <div class="output-block-body" id="outreach-body">
@@ -598,6 +629,14 @@ kbd {
       <div class="output-block-body" id="linkedin-body">
         <div class="skel w100"></div><div class="skel w80"></div><div class="skel w60"></div>
       </div>
+    </div>
+
+    <div class="output-block advice-block" id="block-advice">
+      <div class="output-block-header">
+        <span class="output-block-title"><span class="output-block-num">04&nbsp;&nbsp;</span>Recruiter prep</span>
+        <button class="copy-btn" onclick="copyBlock('advice-body', this)">Copy</button>
+      </div>
+      <div class="output-block-body" id="advice-body"><div class="skel w100"></div><div class="skel w80"></div></div>
     </div>
 
   </div>
@@ -764,6 +803,22 @@ function renderLinkedIn(text) {
   return '<div class="linkedin-text">' + esc(text) + '</div>';
 }
 
+function renderRecruiterBrief(brief) {
+  if (!brief || typeof brief !== 'object') return '';
+  var questions = Array.isArray(brief.screening_questions) ? brief.screening_questions : [];
+  var watchouts = Array.isArray(brief.watchouts) ? brief.watchouts : [];
+  var h = '';
+  if (brief.ideal_candidate) h += '<p class="advice-lead">' + esc(brief.ideal_candidate) + '</p>';
+  h += '<div class="advice-grid">';
+  h += '<div><div class="advice-label">High-signal screening questions</div><ul class="advice-list">';
+  questions.forEach(function(q) { h += '<li>' + esc(q) + '</li>'; });
+  h += '</ul></div>';
+  h += '<div><div class="advice-label">Clarify before you search</div><ul class="advice-list">';
+  watchouts.forEach(function(w) { h += '<li>' + esc(w) + '</li>'; });
+  h += '</ul></div></div>';
+  return h;
+}
+
 // ── Escape HTML ──
 function esc(s) {
   if (!s) return '';
@@ -788,7 +843,7 @@ async function runPipeline() {
   var btn = document.getElementById('run-btn');
   var label = document.getElementById('btn-label');
   btn.disabled = true;
-  label.textContent = 'Running...';
+  label.textContent = 'Building your plan...';
 
   // Show pipeline bar
   var pBar = document.getElementById('pipeline-bar');
@@ -800,7 +855,7 @@ async function runPipeline() {
   // Show output with skeletons
   var outSection = document.getElementById('output-section');
   outSection.classList.add('visible');
-  ['jd-body','bool-body','outreach-body','linkedin-body'].forEach(function(id) {
+  ['jd-body','bool-body','outreach-body','linkedin-body','advice-body'].forEach(function(id) {
     document.getElementById(id).innerHTML = skel();
   });
 
@@ -841,11 +896,13 @@ async function runPipeline() {
     });
 
     // Render output blocks with staggered fade-in
+    document.getElementById('source-body').textContent = jd;
     var blocks = [
       { bodyId: 'jd-body',       blockId: 'block-jd',       html: renderCleanJD(data.clean_jd) },
       { bodyId: 'bool-body',     blockId: 'block-bool',     html: renderBooleans(data.booleans) },
       { bodyId: 'outreach-body', blockId: 'block-outreach', html: renderOutreach(data.outreach) },
       { bodyId: 'linkedin-body', blockId: 'block-linkedin', html: renderLinkedIn(data.linkedin_post) },
+      { bodyId: 'advice-body',   blockId: 'block-advice',   html: renderRecruiterBrief(data.recruiter_brief) },
     ];
     blocks.forEach(function(b, i) {
       setTimeout(function() {
@@ -864,14 +921,14 @@ async function runPipeline() {
     timers.forEach(clearTimeout);
     errBar.textContent = 'Error: ' + e.message;
     errBar.style.display = 'block';
-    ['jd-body','bool-body','outreach-body','linkedin-body'].forEach(function(id) {
+    ['jd-body','bool-body','outreach-body','linkedin-body','advice-body'].forEach(function(id) {
       document.getElementById(id).innerHTML = '<p style="color:#991b1b">Pipeline error. See the error above.</p>';
     });
   }
 
   // Reset button
   btn.disabled = false;
-  label.textContent = 'Run Agents';
+  label.textContent = 'Build my recruiting plan';
 }
 </script>
 </body>
