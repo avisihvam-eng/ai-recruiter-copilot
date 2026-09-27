@@ -1,14 +1,16 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import CopyButton from './CopyButton'
 
 const API_BASE = 'http://localhost:8000/api'
+const TIMEOUT_MS = 120_000 // 2 min — enough for the 4-agent pipeline
 
 /**
- * InputPanel — JD textarea + API key + Generate button.
+ * InputPanel — JD textarea + Build button.
  */
 export default function InputPanel({ onResult, onLoading, onError }) {
   const [jd, setJd] = useState('')
   const textareaRef = useRef(null)
+  const abortRef = useRef(null)
+
   // Auto-resize textarea
   const handleJdChange = (e) => {
     setJd(e.target.value)
@@ -22,9 +24,17 @@ export default function InputPanel({ onResult, onLoading, onError }) {
   const handleGenerate = useCallback(async () => {
     const trimmedJd = jd.trim()
     if (!trimmedJd || trimmedJd.length < 50) {
-      onError('Please paste a full job description (at least 50 characters).')
+      onError("That JD looks a bit short — paste the full description so the agents have enough to work with.")
       return
     }
+
+    // Cancel any in-flight request
+    if (abortRef.current) abortRef.current.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    // Timeout bomb
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
     onLoading(true)
     onError(null)
@@ -35,16 +45,25 @@ export default function InputPanel({ onResult, onLoading, onError }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ raw_jd: trimmedJd }),
+        signal: controller.signal,
       })
+      clearTimeout(timeoutId)
+
       if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.detail || `Server error ${res.status}`)
+        let detail = `Server error ${res.status}`
+        try { detail = (await res.json()).detail || detail } catch (_) {}
+        throw new Error(detail)
       }
       const data = await res.json()
       onResult(data)
     } catch (err) {
-      onError(err.message)
+      if (err.name === 'AbortError') {
+        onError('The pipeline took too long to respond. Try again — the agents are probably just having a moment.')
+      } else {
+        onError(err.message)
+      }
     } finally {
+      clearTimeout(timeoutId)
       onLoading(false)
     }
   }, [jd, onResult, onLoading, onError])
@@ -58,6 +77,9 @@ export default function InputPanel({ onResult, onLoading, onError }) {
     return () => window.removeEventListener('keydown', handler)
   }, [handleGenerate])
 
+  // Cleanup on unmount
+  useEffect(() => () => abortRef.current?.abort(), [])
+
   return (
     <div className="glass-card p-5 mb-6">
       {/* JD Textarea */}
@@ -65,13 +87,9 @@ export default function InputPanel({ onResult, onLoading, onError }) {
         ref={textareaRef}
         value={jd}
         onChange={handleJdChange}
-        placeholder="Paste your raw job description here…
-
-Include: job title, responsibilities, required skills, certifications, tools, experience, location.
-
-Press Ctrl+Enter or click Generate."
+        placeholder={`Drop in a job description — the messier the better.\n\nThe agents will clean it up, write Boolean strings, draft outreach, and build a LinkedIn post. All Outlook-ready, no reformatting needed.\n\nCtrl + Enter to run.`}
         className="w-full min-h-[180px] max-h-[420px] resize-none bg-transparent text-sm
-                   text-text placeholder:text-muted/50 focus:outline-none leading-relaxed
+                   text-text placeholder:text-muted/40 focus:outline-none leading-relaxed
                    font-sans"
         spellCheck={false}
       />
@@ -82,7 +100,7 @@ Press Ctrl+Enter or click Generate."
           <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-xs font-mono">Ctrl</kbd>
           {' + '}
           <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-xs font-mono">Enter</kbd>
-          <span className="ml-1">to generate</span>
+          <span className="ml-1">to run</span>
         </span>
         <div className="flex items-center gap-3">
           {jd.trim() && (
@@ -98,7 +116,7 @@ Press Ctrl+Enter or click Generate."
             disabled={!jd.trim()}
             className="generate-btn"
           >
-            Generate →
+            Build my recruiter kit →
           </button>
         </div>
       </div>

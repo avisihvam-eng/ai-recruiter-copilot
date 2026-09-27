@@ -23,7 +23,7 @@ function App() {
             >
               <span className="text-white text-xs font-bold">R</span>
             </div>
-            <span className="text-sm font-semibold text-text">AI Recruiter Copilot</span>
+            <span className="text-sm font-semibold text-text">Recruiter Copilot</span>
             <span className="text-xs px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/20 font-medium">
               ADK
             </span>
@@ -31,20 +31,23 @@ function App() {
 
           {/* Right side */}
           <div className="flex items-center gap-3">
-            <span className="text-xs text-muted hidden sm:block">Gemini Flash · 2-Agent Pipeline</span>
+            <span className="text-xs text-muted hidden sm:block">Decision support for human recruiters</span>
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Backend connected" />
           </div>
         </div>
       </header>
 
       {/* ── Main Content ─────────────────────────────────────────── */}
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <main className="max-w-3xl mx-auto px-4 py-10">
 
         {/* Page title */}
-        <div className="mb-6">
-          <h1 className="text-lg font-bold text-text">Recruiter Workflow</h1>
-          <p className="text-sm text-muted mt-0.5">
-            Paste a raw JD → get clean JD, Boolean strings, outreach & LinkedIn post.
+        <div className="mb-7">
+          <h1 className="text-3xl font-bold text-text leading-tight tracking-tight">
+            Another JD just landed in your inbox.{' '}
+            <span className="text-accent">Kool. Now what?</span>
+          </h1>
+          <p className="text-sm text-muted mt-3 max-w-xl leading-relaxed">
+            Paste it here. We'll turn the role into a sourcing plan, candidate outreach, screening questions, and a recruiter-ready brief.
           </p>
         </div>
 
@@ -81,7 +84,7 @@ function App() {
             {/* Section label */}
             <div className="flex items-center gap-3 py-1">
               <div className="h-px flex-1 bg-white/5" />
-              <span className="text-xs text-muted font-medium">Results</span>
+              <span className="text-xs text-muted font-medium">Your recruiting kit is ready 🎯</span>
               <div className="h-px flex-1 bg-white/5" />
             </div>
 
@@ -118,14 +121,13 @@ function App() {
               className="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center"
               style={{ background: 'linear-gradient(135deg, #7c6fff22, #5a4fd822)' }}
             >
-              <span className="text-2xl">⚡</span>
+              <span className="text-2xl">🤖</span>
             </div>
-            <p className="text-sm text-muted">
-              Paste a job description above and click{' '}
-              <span className="text-text font-medium">Generate</span>
+            <p className="text-sm font-medium text-text">
+              Your agents are standing by.
             </p>
-            <p className="text-xs text-muted/60 mt-1">
-              2-agent pipeline · JD cleanup → Boolean → Outreach → LinkedIn
+            <p className="text-xs text-muted/70 mt-1.5 max-w-xs mx-auto">
+              Paste a JD above and hit <span className="text-text font-medium">Build my recruiting plan</span> — they'll handle the grunt work so you can focus on the humans.
             </p>
           </div>
         )}
