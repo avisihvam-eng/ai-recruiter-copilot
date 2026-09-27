@@ -68,19 +68,17 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
     Returns:
         dict with keys: clean_jd, booleans, outreach, linkedin_post
     """
-    # Set API key for this request — use a scoped approach rather than
-    # mutating global os.environ mid-flight (safer for concurrent requests).
+    # Set API key for this request if provided
     effective_key = api_key or os.getenv("GOOGLE_API_KEY", "")
     if not effective_key:
         raise ValueError("No Gemini API key provided. Set GOOGLE_API_KEY or pass api_key in request.")
 
-    # Temporarily set for this coroutine's scope (Gemini SDK reads from env)
     os.environ["GOOGLE_API_KEY"] = effective_key
 
-    # Unique session per request — prevents state bleed between concurrent users
+    # Create a unique session per request
     import uuid
     session_id = str(uuid.uuid4())
-    user_id = f"recruiter_{session_id[:8]}"
+    user_id = "recruiter"
 
     session = await _session_service.create_session(
         app_name=APP_NAME,
@@ -89,7 +87,6 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
         state={"raw_jd": raw_jd},
     )
 
-    # Fresh Runner per request — avoids shared mutable state between users
     runner = Runner(
         agent=recruiter_pipeline,
         app_name=APP_NAME,
