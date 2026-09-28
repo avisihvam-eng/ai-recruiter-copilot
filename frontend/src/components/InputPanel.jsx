@@ -4,11 +4,12 @@ import CopyButton from './CopyButton'
 const API_BASE = import.meta.env.DEV ? 'http://localhost:8000/api' : '/api'
 
 /**
- * InputPanel — JD textarea + API key + Generate button.
+ * InputPanel — JD textarea + Build button.
  */
 export default function InputPanel({ onResult, onLoading, onError }) {
   const [jd, setJd] = useState('')
   const textareaRef = useRef(null)
+
   // Auto-resize textarea
   const handleJdChange = (e) => {
     setJd(e.target.value)
@@ -37,8 +38,17 @@ export default function InputPanel({ onResult, onLoading, onError }) {
         body: JSON.stringify({ raw_jd: trimmedJd }),
       })
       if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.detail || `Server error ${res.status}`)
+        let detail = `Server error ${res.status}`
+        try {
+          const body = await res.json()
+          detail = body.detail || detail
+        } catch (_) {}
+
+        // Friendly message for Gemini rate limits
+        if (res.status === 429 || detail.includes('RESOURCE_EXHAUSTED') || detail.includes('429')) {
+          throw new Error('Gemini API rate limit hit — the free tier allows 5 requests per minute. Wait 10 seconds and try again.')
+        }
+        throw new Error(detail)
       }
       const data = await res.json()
       onResult(data)
@@ -49,14 +59,13 @@ export default function InputPanel({ onResult, onLoading, onError }) {
     }
   }, [jd, onResult, onLoading, onError])
 
-  // Ctrl+Enter shortcut
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.ctrlKey && e.key === 'Enter') handleGenerate()
+  // Enter key to submit (when textarea is focused)
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleGenerate()
     }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [handleGenerate])
+  }
 
   return (
     <div className="glass-card p-5 mb-6">
@@ -65,11 +74,8 @@ export default function InputPanel({ onResult, onLoading, onError }) {
         ref={textareaRef}
         value={jd}
         onChange={handleJdChange}
-        placeholder="Paste your raw job description here…
-
-Include: job title, responsibilities, required skills, certifications, tools, experience, location.
-
-Press Ctrl+Enter or click Generate."
+        onKeyDown={handleKeyDown}
+        placeholder={`Paste your job description here…\n\nHit Enter to run.`}
         className="w-full min-h-[180px] max-h-[420px] resize-none bg-transparent text-sm
                    text-text placeholder:text-muted/50 focus:outline-none leading-relaxed
                    font-sans"
@@ -79,10 +85,11 @@ Press Ctrl+Enter or click Generate."
       {/* Footer */}
       <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
         <span className="text-xs text-muted">
-          <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">Ctrl</kbd>
-          {' + '}
           <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">Enter</kbd>
-          <span className="ml-1">to run</span>
+          <span className="ml-1.5">to run</span>
+          <span className="mx-1.5 text-border">·</span>
+          <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">Shift + Enter</kbd>
+          <span className="ml-1.5">new line</span>
         </span>
         <div className="flex items-center gap-3">
           {jd.trim() && (

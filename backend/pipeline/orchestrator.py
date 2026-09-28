@@ -99,13 +99,33 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
         parts=[types.Part(text=f"Process this job description:\n\n{raw_jd}")],
     )
 
-    # Run the pipeline (async generator — drain it)
-    async for _event in runner.run_async(
-        user_id=user_id,
-        session_id=session_id,
-        new_message=user_message,
-    ):
-        pass  # We only need the final session state
+    # Run the pipeline with retry for Gemini rate limits (429)
+    import asyncio
+    max_retries = 3
+    for attempt in range(max_retries + 1):
+        try:
+            async for _event in runner.run_async(
+                user_id=user_id,
+                session_id=session_id,
+                new_message=user_message,
+            ):
+                pass  # We only need the final session state
+            break  # Success — exit retry loop
+        except Exception as e:
+            err_str = str(e)
+            if ("429" in err_str or "RESOURCE_EXHAUSTED" in err_str) and attempt < max_retries:
+                wait = 10 * (2 ** attempt)  # 10s, 20s, 40s
+                await asyncio.sleep(wait)
+                # Recreate session for retry (state is reset)
+                session = await _session_service.create_session(
+                    app_name=APP_NAME,
+                    user_id=user_id,
+                    session_id=f"{session_id}_r{attempt+1}",
+                    state={"raw_jd": raw_jd},
+                )
+                session_id = session.id
+                continue
+            raise  # Non-retryable error or out of retries
 
     # Retrieve updated session state
     final_session = await _session_service.get_session(
