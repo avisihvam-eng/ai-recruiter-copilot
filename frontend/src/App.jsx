@@ -13,26 +13,26 @@ function App() {
   return (
     <div className="min-h-screen bg-bg font-sans">
       {/* ── Top Bar ──────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 border-b border-white/5 bg-bg/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-border bg-white/90 backdrop-blur-md">
         <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2.5">
             <div
               className="w-5 h-5 rounded-md flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #7c6fff, #5a4fd8)' }}
+              style={{ background: '#111111' }}
             >
               <span className="text-white text-xs font-bold">R</span>
             </div>
-            <span className="text-sm font-semibold text-text">AI Recruiter Copilot</span>
-            <span className="text-xs px-1.5 py-0.5 rounded bg-accent/10 text-accent border border-accent/20 font-medium">
+            <span className="text-sm font-semibold text-text">Recruiter Copilot</span>
+            <span className="text-xs px-1.5 py-0.5 rounded bg-surface text-text-dim border border-border font-medium">
               ADK
             </span>
           </div>
 
           {/* Right side */}
           <div className="flex items-center gap-3">
-            <span className="text-xs text-muted hidden sm:block">Gemini Flash · 2-Agent Pipeline</span>
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Backend connected" />
+            <span className="text-xs text-muted hidden sm:block">Decision support for human recruiters</span>
+            <div className="w-2 h-2 rounded-full bg-emerald-500" title="Backend connected" />
           </div>
         </div>
       </header>
@@ -83,9 +83,9 @@ function App() {
           <div className="space-y-4 animate-fade-in">
             {/* Section label */}
             <div className="flex items-center gap-3 py-1">
-              <div className="h-px flex-1 bg-white/5" />
+              <div className="h-px flex-1 bg-border" />
               <span className="text-xs text-muted font-medium">Your kit</span>
-              <div className="h-px flex-1 bg-white/5" />
+              <div className="h-px flex-1 bg-border" />
             </div>
 
             {/* Agent 1 Outputs */}

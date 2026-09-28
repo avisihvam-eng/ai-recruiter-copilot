@@ -77,12 +77,12 @@ Press Ctrl+Enter or click Generate."
       />
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
         <span className="text-xs text-muted">
-          <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-xs font-mono">Ctrl</kbd>
+          <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">Ctrl</kbd>
           {' + '}
-          <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-xs font-mono">Enter</kbd>
-          <span className="ml-1">to generate</span>
+          <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">Enter</kbd>
+          <span className="ml-1">to run</span>
         </span>
         <div className="flex items-center gap-3">
           {jd.trim() && (
@@ -98,7 +98,7 @@ Press Ctrl+Enter or click Generate."
             disabled={!jd.trim()}
             className="generate-btn"
           >
-            Generate →
+            Build my recruiter kit →
           </button>
         </div>
       </div>

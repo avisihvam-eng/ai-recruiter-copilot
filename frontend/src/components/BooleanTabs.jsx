@@ -24,7 +24,7 @@ export default function BooleanTabs({ booleans }) {
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex gap-1 mb-4 p-1 bg-white/5 rounded-lg w-fit">
+      <div className="flex gap-1 mb-4 p-1 bg-surface border border-border rounded-lg w-fit">
         {TABS.map((tab) => (
           <button
             key={tab.key}

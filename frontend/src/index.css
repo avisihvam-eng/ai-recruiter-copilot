@@ -12,15 +12,15 @@
     scroll-behavior: smooth;
   }
   body {
-    background-color: #0a0a0f;
-    color: #e8e8f0;
+    background-color: #ffffff;
+    color: #111111;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   ::selection {
-    background-color: #7c6fff33;
-    color: #e8e8f0;
+    background-color: #5b4df022;
+    color: #111111;
   }
   ::-webkit-scrollbar {
     width: 4px;
@@ -29,69 +29,79 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #2a2a3e;
+    background: #e5e5e5;
     border-radius: 2px;
   }
 }
 
 @layer components {
+  /* Input / result card — clean white with a visible border */
   .glass-card {
-    background: rgba(17, 17, 24, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
   }
 
   .section-card {
     @apply glass-card p-5 animate-slide-up;
   }
 
+  /* Copy button — visible on white, clear on hover */
   .copy-btn {
-    @apply text-xs font-medium px-2.5 py-1 rounded-md transition-all duration-200;
-    @apply text-text-dim bg-white/5 hover:bg-white/10 hover:text-text;
-    @apply border border-transparent hover:border-white/10;
+    @apply text-xs font-medium px-2.5 py-1 rounded-md transition-all duration-150;
+    @apply text-text-dim bg-surface hover:bg-border hover:text-text;
+    @apply border border-border;
   }
 
   .copy-btn.copied {
-    @apply text-emerald-400 bg-emerald-400/10 border-emerald-400/20;
+    @apply text-emerald-700 bg-emerald-50 border-emerald-200;
   }
 
+  /* Tab buttons */
   .tab-btn {
-    @apply text-xs font-medium px-3 py-1.5 rounded-md transition-all duration-200;
-    @apply text-muted hover:text-text;
+    @apply text-xs font-medium px-3 py-1.5 rounded-md transition-all duration-150;
+    @apply text-muted hover:text-text hover:bg-surface;
   }
 
   .tab-btn.active {
-    @apply text-accent bg-accent/10;
+    @apply text-accent font-semibold;
+    background-color: #5b4df014;
   }
 
+  /* Skill chips — light grey pill */
   .skill-chip {
-    @apply text-xs px-2.5 py-1 rounded-full border border-white/10 text-text-dim;
-    @apply bg-white/5 font-medium;
+    @apply text-xs px-2.5 py-1 rounded-full border border-border text-text-dim;
+    @apply bg-surface font-medium;
   }
 
+  /* ── Primary CTA — solid black, unambiguous ── */
   .generate-btn {
-    @apply relative overflow-hidden font-semibold text-sm px-6 py-2.5 rounded-lg;
-    @apply text-white transition-all duration-200;
-    background: linear-gradient(135deg, #7c6fff, #5a4fd8);
+    @apply relative overflow-hidden font-semibold text-sm px-5 py-2.5 rounded-lg;
+    @apply text-white transition-all duration-150;
+    background: #111111;
   }
   .generate-btn:hover {
+    background: #222222;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
     transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(124, 111, 255, 0.3);
   }
   .generate-btn:active {
     transform: translateY(0);
+    box-shadow: none;
   }
   .generate-btn:disabled {
-    opacity: 0.5;
+    background: #d1d1d1;
+    color: #888888;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
   }
 
+  /* Boolean string display */
   .bool-display {
-    @apply font-mono text-sm leading-relaxed text-emerald-300;
-    @apply bg-emerald-400/5 border border-emerald-400/10 rounded-lg p-4;
+    @apply font-mono text-sm leading-relaxed;
+    @apply bg-surface border border-border rounded-lg p-4;
+    color: #4338ca;
     word-break: break-all;
   }
 }
