@@ -35,25 +35,22 @@ export default function CleanJDSection({ cleanJd }) {
   return (
     <div className="section-card">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <span className="text-accent text-base">📋</span>
-          <h3 className="text-sm font-semibold text-text">Clean JD</h3>
-        </div>
+        <h3 className="text-sm font-semibold text-text">Clean JD</h3>
         <CopyButton text={fullText} />
       </div>
 
       {/* Header */}
       <div className="mb-4">
         <h2 className="text-base font-bold text-text">{title}</h2>
-        <div className="flex gap-3 mt-1 flex-wrap">
+        <div className="flex gap-4 mt-1 flex-wrap">
           {location && (
-            <span className="text-xs text-muted flex items-center gap-1">
-              📍 {location}
+            <span className="text-xs text-muted">
+              {location}
             </span>
           )}
           {experience && (
-            <span className="text-xs text-muted flex items-center gap-1">
-              🕐 {experience}
+            <span className="text-xs text-muted">
+              {experience}
             </span>
           )}
         </div>

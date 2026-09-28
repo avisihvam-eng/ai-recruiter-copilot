@@ -41,10 +41,13 @@ function App() {
       <main className="max-w-3xl mx-auto px-4 py-8">
 
         {/* Page title */}
-        <div className="mb-6">
-          <h1 className="text-lg font-bold text-text">Recruiter Workflow</h1>
-          <p className="text-sm text-muted mt-0.5">
-            Paste a raw JD → get clean JD, Boolean strings, outreach & LinkedIn post.
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-text leading-snug tracking-tight">
+            Another JD just landed in your inbox.{' '}
+            <span className="text-accent">Kool. Now what?</span>
+          </h1>
+          <p className="text-sm text-muted mt-3 max-w-xl leading-relaxed">
+            Paste it here. We'll turn the role into a sourcing plan, candidate outreach, screening questions, and a recruiter-ready brief.
           </p>
         </div>
 
@@ -58,7 +61,7 @@ function App() {
         {/* Error Banner */}
         {error && (
           <div className="mb-4 p-3.5 rounded-lg bg-red-500/10 border border-red-500/20 animate-fade-in">
-            <p className="text-sm text-red-400">⚠ {error}</p>
+            <p className="text-sm text-red-400">! {error}</p>
             {error.includes('API key') && (
               <a
                 href="https://aistudio.google.com/app/apikey"
@@ -81,7 +84,7 @@ function App() {
             {/* Section label */}
             <div className="flex items-center gap-3 py-1">
               <div className="h-px flex-1 bg-white/5" />
-              <span className="text-xs text-muted font-medium">Results</span>
+              <span className="text-xs text-muted font-medium">Your kit</span>
               <div className="h-px flex-1 bg-white/5" />
             </div>
 
@@ -92,17 +95,14 @@ function App() {
             {/* Agent 2 Outputs */}
             <OutputSection
               title="Short Outreach"
-              icon="✉️"
               content={result.outreach?.short}
             />
             <OutputSection
               title="Detailed Outreach"
-              icon="📧"
               content={result.outreach?.detailed}
             />
             <OutputSection
               title="LinkedIn Hiring Post"
-              icon="💼"
               content={result.linkedin_post}
             />
 
@@ -114,18 +114,12 @@ function App() {
         {/* Empty state */}
         {!result && !loading && !error && (
           <div className="text-center py-16 animate-fade-in">
-            <div
-              className="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #7c6fff22, #5a4fd822)' }}
-            >
-              <span className="text-2xl">⚡</span>
-            </div>
             <p className="text-sm text-muted">
               Paste a job description above and click{' '}
               <span className="text-text font-medium">Generate</span>
             </p>
             <p className="text-xs text-muted/60 mt-1">
-              2-agent pipeline · JD cleanup → Boolean → Outreach → LinkedIn
+              JD cleanup · Boolean strings · Outreach · LinkedIn
             </p>
           </div>
         )}

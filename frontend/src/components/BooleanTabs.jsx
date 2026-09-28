@@ -19,10 +19,7 @@ export default function BooleanTabs({ booleans }) {
   return (
     <div className="section-card">
       <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <span className="text-accent text-base">⚡</span>
-          <h3 className="text-sm font-semibold text-text">Boolean Strings</h3>
-        </div>
+        <h3 className="text-sm font-semibold text-text">Boolean Strings</h3>
         <CopyButton text={current} />
       </div>
 
