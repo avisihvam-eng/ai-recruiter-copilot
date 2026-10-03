@@ -47,7 +47,7 @@ function App() {
             <span className="text-accent">Kool. Now what?</span>
           </h1>
           <p className="text-sm text-muted mt-3 max-w-xl leading-relaxed">
-            Paste it here. We'll turn the role into a sourcing plan, candidate outreach, screening questions, and a recruiter-ready brief.
+            Paste it here. We'll turn the role into Boolean search strings, a sourcing plan, candidate outreach, screening questions, and a recruiter-ready brief.
           </p>
         </div>
 
