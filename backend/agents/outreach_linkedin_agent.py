@@ -17,19 +17,21 @@ STRUCTURED JD DATA:
 Using that data, generate a SINGLE valid JSON object (no markdown, no code blocks, just raw JSON):
 
 {
-  "outreach_short": "Short outreach message — under 80 words. See rules below.",
-  "outreach_detailed": "Detailed outreach message — under 150 words. See rules below.",
+  "outreach_short": "Short outreach message — MAX 40 words. See rules below.",
+  "outreach_detailed": "Detailed outreach message — MAX 70 words. See rules below.",
   "linkedin_post": "Full LinkedIn hiring post following the exact format below."
 }
 
 OUTREACH_RULES — follow exactly:
 - ALWAYS open both messages with exactly: Hi %FIRSTNAME%,
   (This is LinkedIn Recruiter's native personalization token. Do not change it, do not use [Candidate Name] or any bracket placeholder.)
-- Short outreach: under 80 words. One sentence on the role, one on why their background fits, one CTA. Punchy. No filler.
-- Detailed outreach: under 150 words. Role + team context, 1-2 specific skills from the JD, clear CTA. Warm but professional.
+- FORMAT: put "Hi %FIRSTNAME%," on its own line, then a blank line (\\n\\n), then the body. Put the closing question in its own paragraph after another blank line. Use \\n for line breaks inside the JSON string.
+- Short outreach: MAX 40 words total (excluding the greeting). Two sentences + one short question. Role + one specific skill match + CTA. No filler.
+- Detailed outreach: MAX 70 words total (excluding the greeting). Role, 2 specific skills from the JD, one short CTA question. Warm, direct, plain English.
+- Cut every word that doesn't add meaning. No adjectives like "comprehensive", "pivotal", "high-quality", "demonstrated". No "We are building out our team".
 - NEVER use phrases like "exciting opportunity", "fast-paced environment", "I came across your profile", or "hope this finds you well"
 - Reference actual skills and role details from the JD — do not leave any [bracket placeholders] in the output
-- Sound like a real recruiter writing to a real person
+- Sound like a real recruiter writing a quick note to a real person
 
 LINKEDIN POST FORMAT (use exactly this structure, fill in from JD data):
 

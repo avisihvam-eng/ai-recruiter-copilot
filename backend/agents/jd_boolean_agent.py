@@ -38,7 +38,7 @@ The JSON must match this exact structure:
 
 CRITICAL FORMATTING RULES:
 1. "objective" — exactly 2-3 sentences. Do NOT use bullet points. Write like a human, not a job board.
-2. "responsibilities" — 4-6 items. Each starts with a strong action verb (Monitor, Build, Collaborate, etc). One idea per bullet. Do not pad.
+2. "responsibilities" (these are the JOB DUTIES) — REQUIRED, never empty. 4-6 items. Pull them from the JD's duties / responsibilities / "what you'll do" / "role overview" content. If the JD has no explicit duties section, derive the duties from the role description and summary — do not invent new scope. Each starts with a strong action verb (Coordinate, Maintain, Build, Track, etc). One idea per bullet, max ~15 words. Do not pad.
 3. "required_skills" — NEVER use bare keywords like "Python" or "SQL". Each item MUST be a complete sentence that names the skill AND describes the expected proficiency or use case from the JD. Example: "Hands-on experience with Python or PowerShell for monitoring automation and configuration scripting tasks."
 4. "preferred_skills" — same sentence format as required_skills. Only include preferences explicitly stated or clearly labelled as inferred; do not turn assumptions into requirements.
 5. Overall length: balanced. Structured. Not a wall of text. Every word must earn its place.
