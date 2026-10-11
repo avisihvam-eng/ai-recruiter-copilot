@@ -17,7 +17,7 @@ export default function BooleanTabs({ booleans }) {
   const current = booleans[active] || ''
 
   return (
-    <div className="section-card">
+    <div className="section-card output-card boolean-card">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-text">Boolean Strings</h3>
         <CopyButton text={current} />

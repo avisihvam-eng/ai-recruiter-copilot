@@ -73,7 +73,7 @@ export default function CleanJDSection({ cleanJd }) {
 </div>`.trim()
 
   return (
-    <div className="section-card">
+    <div className="section-card output-card role-card">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-text">Clean JD</h3>
         <CopyButton text={plainText} html={html} />

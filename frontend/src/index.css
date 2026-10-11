@@ -105,3 +105,207 @@
     word-break: break-all;
   }
 }
+
+/* ── UI-only refinement: deliberately no content rules live here. ── */
+@layer base {
+  body {
+    background:
+      radial-gradient(circle at 50% -18%, rgba(91, 77, 240, 0.07), transparent 30rem),
+      #ffffff;
+  }
+  button:focus-visible,
+  textarea:focus-visible,
+  a:focus-visible {
+    outline: 3px solid rgba(91, 77, 240, 0.3);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .app-shell {
+    min-height: 100vh;
+    background-image: linear-gradient(rgba(17, 17, 17, 0.025) 1px, transparent 1px);
+    background-size: 100% 118px;
+  }
+
+  .app-header {
+    box-shadow: 0 1px 0 rgba(17, 17, 17, 0.02);
+  }
+
+  .workspace {
+    padding-top: 3.5rem;
+    padding-bottom: 5rem;
+  }
+
+  .hero-copy {
+    position: relative;
+    padding: 0.25rem 0 1.25rem;
+  }
+
+  .hero-copy::before {
+    content: '';
+    position: absolute;
+    left: -0.9rem;
+    top: 0.55rem;
+    width: 3px;
+    height: 2.3rem;
+    border-radius: 3px;
+    background: #5b4df0;
+  }
+
+  .hero-copy h1 {
+    max-width: 42rem;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-copy p {
+    max-width: 37rem;
+  }
+
+  .input-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    border-color: #dedede;
+    box-shadow: 0 18px 45px rgba(17, 17, 17, 0.055), 0 1px 2px rgba(17, 17, 17, 0.04);
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  }
+
+  .input-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, #111111 0%, #5b4df0 48%, #d8d4ff 100%);
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+
+  .input-card:focus-within {
+    border-color: rgba(91, 77, 240, 0.5);
+    box-shadow: 0 20px 48px rgba(91, 77, 240, 0.12), 0 0 0 4px rgba(91, 77, 240, 0.055);
+  }
+
+  .input-card:focus-within::before { opacity: 1; }
+
+  .jd-editor {
+    line-height: 1.75;
+    padding: 0.55rem 0.2rem 0.2rem;
+  }
+
+  .jd-editor::placeholder { color: #b2b2b2; }
+
+  .editor-footer {
+    min-height: 3.6rem;
+  }
+
+  .generate-btn {
+    min-height: 2.8rem;
+    padding-inline: 1.15rem;
+    border-radius: 9px;
+  }
+
+  .generate-btn:not(:disabled)::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 2px;
+    background: #8e84ff;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 180ms ease;
+  }
+
+  .generate-btn:not(:disabled):hover::after { transform: scaleX(1); }
+
+  .output-card {
+    position: relative;
+    border-radius: 13px;
+    border-color: #e3e3e3;
+    box-shadow: 0 7px 20px rgba(17, 17, 17, 0.035);
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  }
+
+  .output-card:hover {
+    border-color: #d1d1d1;
+    box-shadow: 0 15px 30px rgba(17, 17, 17, 0.075);
+    transform: translateY(-2px);
+  }
+
+  .output-card > div:first-child {
+    padding-bottom: 0.95rem;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .role-card { border-top: 3px solid #111111; }
+  .boolean-card { border-top: 3px solid #5b4df0; }
+
+  .copy-btn {
+    min-width: 4.25rem;
+    border-radius: 7px;
+  }
+
+  .copy-btn:hover { transform: translateY(-1px); }
+
+  .bool-display {
+    border-color: #e1defd;
+    background: linear-gradient(135deg, #fafaff, #f5f4ff);
+  }
+
+  .tab-btn { border-radius: 7px; }
+
+  .loading-state {
+    margin: 1.5rem 0;
+    border: 1px solid #e7e7e7;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ffffff, #fafaff);
+    padding: 1.25rem;
+  }
+
+  .loading-head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .loading-dots {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .loading-dots span {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 999px;
+    background: #5b4df0;
+    animation: loadingDot 1.35s ease-in-out infinite;
+  }
+
+  .loading-dots span:nth-child(2) { animation-delay: 0.14s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.28s; }
+
+  .failure-state { box-shadow: 0 8px 18px rgba(220, 38, 38, 0.06); }
+
+  @keyframes loadingDot {
+    0%, 80%, 100% { opacity: 0.32; transform: translateY(0); }
+    40% { opacity: 1; transform: translateY(-0.18rem); }
+  }
+}
+
+@media (max-width: 640px) {
+  .workspace { padding-top: 2.25rem; }
+  .hero-copy::before { left: -0.15rem; top: 0.2rem; height: 2rem; }
+  .hero-copy { padding-left: 0.7rem; }
+  .input-card { padding: 1rem; }
+  .editor-footer { gap: 0.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

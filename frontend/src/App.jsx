@@ -11,10 +11,10 @@ function App() {
   const [error, setError] = useState(null)
 
   return (
-    <div className="min-h-screen bg-bg font-sans">
+    <div className="min-h-screen bg-bg font-sans app-shell">
       {/* ── Top Bar ──────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 border-b border-border bg-white/90 backdrop-blur-md">
-        <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-50 border-b border-border bg-white/90 backdrop-blur-md app-header">
+        <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between app-header-inner">
           {/* Logo */}
           <div className="flex items-center gap-2.5">
             <div
@@ -38,10 +38,10 @@ function App() {
       </header>
 
       {/* ── Main Content ─────────────────────────────────────────── */}
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <main className="max-w-3xl mx-auto px-4 py-8 workspace">
 
         {/* Page title */}
-        <div className="mb-8">
+        <div className="mb-8 hero-copy">
           <h1 className="text-3xl font-bold text-text leading-snug tracking-tight">
             Another JD just landed in your inbox.{' '}
             <span className="text-accent">Kool. Now what?</span>
@@ -60,7 +60,7 @@ function App() {
 
         {/* Error Banner */}
         {error && (
-          <div className="mb-4 p-3.5 rounded-lg bg-red-500/10 border border-red-500/20 animate-fade-in">
+          <div className="failure-state mb-4 p-3.5 rounded-lg bg-red-500/10 border border-red-500/20 animate-fade-in">
             <p className="text-sm text-red-400">! {error}</p>
             {error.includes('API key') && (
               <a

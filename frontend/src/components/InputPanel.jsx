@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import CopyButton from './CopyButton'
 
 const API_BASE = import.meta.env.DEV ? 'http://localhost:8000/api' : '/api'
@@ -7,12 +7,13 @@ const API_BASE = import.meta.env.DEV ? 'http://localhost:8000/api' : '/api'
  * InputPanel — JD textarea + Build button.
  */
 export default function InputPanel({ onResult, onLoading, onError }) {
-  const [jd, setJd] = useState('')
+  const [jd, setJd] = useState(() => localStorage.getItem('recruiter-copilot:last-jd') || '')
   const textareaRef = useRef(null)
 
   // Auto-resize textarea
   const handleJdChange = (e) => {
     setJd(e.target.value)
+    localStorage.setItem('recruiter-copilot:last-jd', e.target.value)
     const ta = textareaRef.current
     if (ta) {
       ta.style.height = 'auto'
@@ -68,7 +69,7 @@ export default function InputPanel({ onResult, onLoading, onError }) {
   }
 
   return (
-    <div className="glass-card p-5 mb-6">
+    <div className="glass-card input-card p-5 mb-6">
       {/* JD Textarea */}
       <textarea
         ref={textareaRef}
@@ -76,14 +77,14 @@ export default function InputPanel({ onResult, onLoading, onError }) {
         onChange={handleJdChange}
         onKeyDown={handleKeyDown}
         placeholder={`Paste your job description here…\n\nHit Enter to run.`}
-        className="w-full min-h-[180px] max-h-[420px] resize-none bg-transparent text-sm
+        className="jd-editor w-full min-h-[180px] max-h-[420px] resize-none bg-transparent text-sm
                    text-text placeholder:text-muted/50 focus:outline-none leading-relaxed
                    font-sans"
         spellCheck={false}
       />
 
       {/* Footer */}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+      <div className="editor-footer flex items-center justify-between mt-3 pt-3 border-t border-border">
         <span className="text-xs text-muted">
           <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">Enter</kbd>
           <span className="ml-1.5">to run</span>
@@ -94,7 +95,10 @@ export default function InputPanel({ onResult, onLoading, onError }) {
         <div className="flex items-center gap-3">
           {jd.trim() && (
             <button
-              onClick={() => setJd('')}
+              onClick={() => {
+                setJd('')
+                localStorage.removeItem('recruiter-copilot:last-jd')
+              }}
               className="text-xs text-muted hover:text-text transition-colors"
             >
               Clear
