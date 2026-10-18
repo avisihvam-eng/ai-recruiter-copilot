@@ -1,10 +1,10 @@
-# AI Recruiter Copilot
+# MyHiringKit
 
 A four-agent recruiter workflow powered by **Google ADK** + **Gemini 2.5 Flash**.
 
 Paste a raw job description → get a recruiter brief, Boolean search strings, candidate outreach, a LinkedIn hiring post, and intake prep questions in one run.
 
-**[Live demo →](https://recruitercopilot.vercel.app)**
+**[Live demo →](https://myhiringkit.vercel.app)**
 
 ---
 

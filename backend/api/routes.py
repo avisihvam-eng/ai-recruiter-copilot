@@ -1,5 +1,5 @@
 """
-FastAPI routes for AI Recruiter Copilot.
+FastAPI routes for MyHiringKit.
 """
 
 from fastapi import APIRouter, HTTPException
@@ -25,7 +25,7 @@ class GenerateResponse(BaseModel):
 
 @router.get("/health")
 async def health():
-    return {"status": "ok", "service": "AI Recruiter Copilot"}
+    return {"status": "ok", "service": "MyHiringKit"}
 
 
 @router.post("/generate", response_model=GenerateResponse)

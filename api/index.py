@@ -19,7 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.api.routes import router
 from backend.config import allowed_origins
 
-app = FastAPI(title="AI Recruiter Copilot")
+app = FastAPI(title="MyHiringKit")
 
 app.add_middleware(
     CORSMiddleware,

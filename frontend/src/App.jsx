@@ -215,7 +215,7 @@ export default function App() {
       </main>
 
       <footer className="footer">
-        <span>Recruiter Copilot · Google ADK + Gemini</span>
+        <span>MyHiringKit · Google ADK + Gemini</span>
         <nav className="footer-links" aria-label="Project links">
           <a
             href="https://github.com/avisihvam-eng/ai-recruiter-copilot"

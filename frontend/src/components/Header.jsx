@@ -27,9 +27,9 @@ export default function Header({ status = 'checking' }) {
       <div className="app-header-inner">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">
-            R
+            M
           </span>
-          <span className="brand-name">Recruiter Copilot</span>
+          <span className="brand-name">MyHiringKit</span>
         </div>
 
         {showStatus ? (

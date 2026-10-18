@@ -1,5 +1,5 @@
 """
-AI Recruiter Copilot — FastAPI entry point.
+MyHiringKit — FastAPI entry point.
 
 Serves the JSON API under /api and the built React UI at /.
 
@@ -24,7 +24,7 @@ from backend.api.routes import router  # noqa: E402
 from backend.config import allowed_origins  # noqa: E402
 
 app = FastAPI(
-    title="AI Recruiter Copilot",
+    title="MyHiringKit",
     description="Multi-agent recruiter workflow powered by Google ADK + Gemini Flash",
     version="1.0.0",
 )

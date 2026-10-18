@@ -46,7 +46,7 @@ const ul = (mb = 10) => `margin:0 0 ${mb}pt 0;mso-margin-top-alt:0;mso-margin-bo
 const wrap = (inner) =>
   '<html xmlns:o="urn:schemas-microsoft-com:office:office"><head>' +
   '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' +
-  '<meta name="Generator" content="Recruiter Copilot"></head>' +
+  '<meta name="Generator" content="MyHiringKit"></head>' +
   `<body><div style="${BODY}">${inner}</div></body></html>`
 
 /* ── text safety ─────────────────────────────────────────────────────────── */
