@@ -1,118 +1,130 @@
-import { useState, useCallback, useRef } from 'react'
-import CopyButton from './CopyButton'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-const API_BASE = import.meta.env.DEV ? 'http://localhost:8000/api' : '/api'
+export const MIN_CHARS = 50
+const STORAGE_KEY = 'recruiter-copilot:last-jd'
+const MAX_EDITOR_HEIGHT = 420
+
+// Showing ⌘ on Windows makes non-technical users think the shortcut is Mac-only.
+const IS_MAC =
+  typeof navigator !== 'undefined' && /Mac|iPhone|iPad|iPod/.test(navigator.userAgent || '')
 
 /**
- * InputPanel — JD textarea + Build button.
+ * InputPanel — the JD editor / composer.
+ *
+ *  - Cmd/Ctrl+Enter runs the kit. Plain Enter inserts a newline, which is what
+ *    people expect when pasting or editing a multi-line JD.
+ *  - A live character counter explains *why* the button is disabled.
+ *
+ * The "load a sample JD" affordance deliberately lives only in the empty state,
+ * next to the action that actually shows a finished kit. Two controls that both
+ * said "sample" but did different things was the most confusing thing on the page.
  */
-export default function InputPanel({ onResult, onLoading, onError }) {
-  const [jd, setJd] = useState(() => localStorage.getItem('recruiter-copilot:last-jd') || '')
+export default function InputPanel({ onRun, loading }) {
+  const [jd, setJd] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEY) || ''
+    } catch {
+      return ''
+    }
+  })
   const textareaRef = useRef(null)
 
-  // Auto-resize textarea
-  const handleJdChange = (e) => {
-    setJd(e.target.value)
-    localStorage.setItem('recruiter-copilot:last-jd', e.target.value)
-    const ta = textareaRef.current
-    if (ta) {
-      ta.style.height = 'auto'
-      ta.style.height = Math.min(ta.scrollHeight, 420) + 'px'
+  const count = jd.trim().length
+  const tooShort = count < MIN_CHARS
+
+  // Persist drafts so a refresh never loses a pasted JD.
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, jd)
+    } catch {
+      /* storage full or blocked — drafts are a convenience, not a requirement */
+    }
+  }, [jd])
+
+  // Auto-grow the editor.
+  useEffect(() => {
+    const el = textareaRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${Math.min(el.scrollHeight, MAX_EDITOR_HEIGHT)}px`
+  }, [jd])
+
+  const counter = useMemo(() => {
+    if (count === 0) return { text: 'Paste a job description to begin', tone: 'idle' }
+    if (tooShort) return { text: `${count} characters · ${MIN_CHARS - count} more to go`, tone: 'short' }
+    return { text: `${count} characters · looks good`, tone: 'ready' }
+  }, [count, tooShort])
+
+  const handleRun = useCallback(() => {
+    if (loading || tooShort) return
+    onRun(jd.trim())
+  }, [jd, loading, tooShort, onRun])
+
+  const handleKeyDown = (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      event.preventDefault()
+      handleRun()
     }
   }
 
-  const handleGenerate = useCallback(async () => {
-    const trimmedJd = jd.trim()
-    if (!trimmedJd || trimmedJd.length < 50) {
-      onError('Please paste a full job description (at least 50 characters).')
-      return
-    }
-
-    onLoading(true)
-    onError(null)
-    onResult(null)
-
-    try {
-      const res = await fetch(`${API_BASE}/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ raw_jd: trimmedJd }),
-      })
-      if (!res.ok) {
-        let detail = `Server error ${res.status}`
-        try {
-          const body = await res.json()
-          detail = body.detail || detail
-        } catch (_) {}
-
-        // Friendly message for Gemini rate limits
-        if (res.status === 429 || detail.includes('RESOURCE_EXHAUSTED') || detail.includes('429')) {
-          throw new Error('Gemini API rate limit hit — the free tier allows 5 requests per minute. Wait 10 seconds and try again.')
-        }
-        throw new Error(detail)
-      }
-      const data = await res.json()
-      onResult(data)
-    } catch (err) {
-      onError(err.message)
-    } finally {
-      onLoading(false)
-    }
-  }, [jd, onResult, onLoading, onError])
-
-  // Enter key to submit (when textarea is focused)
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleGenerate()
-    }
+  const handleClear = () => {
+    setJd('')
+    textareaRef.current?.focus()
   }
 
   return (
-    <div className="glass-card input-card p-5 mb-6">
-      {/* JD Textarea */}
-      <textarea
-        ref={textareaRef}
-        value={jd}
-        onChange={handleJdChange}
-        onKeyDown={handleKeyDown}
-        placeholder={`Paste your job description here…\n\nHit Enter to run.`}
-        className="jd-editor w-full min-h-[180px] max-h-[420px] resize-none bg-transparent text-sm
-                   text-text placeholder:text-muted/50 focus:outline-none leading-relaxed
-                   font-sans"
-        spellCheck={false}
-      />
+    <>
+      <div className="composer">
+        <label className="composer-label" htmlFor="jd-input">
+          Job description
+        </label>
 
-      {/* Footer */}
-      <div className="editor-footer flex items-center justify-between mt-3 pt-3 border-t border-border">
-        <span className="text-xs text-muted">
-          <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">Enter</kbd>
-          <span className="ml-1.5">to run</span>
-          <span className="mx-1.5 text-border">·</span>
-          <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">Shift + Enter</kbd>
-          <span className="ml-1.5">new line</span>
-        </span>
-        <div className="flex items-center gap-3">
-          {jd.trim() && (
+        <textarea
+          id="jd-input"
+          ref={textareaRef}
+          value={jd}
+          onChange={(e) => setJd(e.target.value)}
+          onKeyDown={handleKeyDown}
+          aria-describedby="jd-counter"
+          placeholder={
+            'Paste the raw job description here — messy formatting is fine.\n\n' +
+            'We keep your wording untouched and build the recruiter assets around it.'
+          }
+          className="jd-editor"
+          spellCheck={false}
+        />
+
+        <div className="composer-footer">
+          <span id="jd-counter" className={`char-counter tone-${counter.tone}`} aria-live="polite">
+            {counter.text}
+          </span>
+
+          <div className="composer-actions">
+            {jd && (
+              <button
+                type="button"
+                className="btn btn-quiet btn-sm"
+                onClick={handleClear}
+                disabled={loading}
+              >
+                Clear
+              </button>
+            )}
             <button
-              onClick={() => {
-                setJd('')
-                localStorage.removeItem('recruiter-copilot:last-jd')
-              }}
-              className="text-xs text-muted hover:text-text transition-colors"
+              type="button"
+              className="btn btn-primary"
+              onClick={handleRun}
+              disabled={loading || tooShort}
             >
-              Clear
+              {loading ? 'Building…' : 'Build kit'}
             </button>
-          )}
-          <button
-            onClick={handleGenerate}
-            disabled={!jd.trim()}
-            className="generate-btn"
-          >
-            Build my recruiter kit →
-          </button>
+          </div>
         </div>
       </div>
-    </div>
+
+      <p className="composer-hint">
+        Run with <kbd>{IS_MAC ? '⌘' : 'Ctrl'}</kbd> + <kbd>Enter</kbd>
+      </p>
+    </>
   )
 }

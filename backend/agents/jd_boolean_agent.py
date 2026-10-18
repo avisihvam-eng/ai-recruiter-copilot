@@ -1,6 +1,11 @@
 """
-Agent 1: Role Brief Agent
-Reads raw_jd from session state and outputs a separate structured recruiter brief.
+Agent 1: Role Brief
+
+Reads raw_jd from session state and outputs the structured recruiter brief as
+JSON, written to the `jd_boolean_output` key.
+
+Naming note: this module is called `jd_boolean_agent` for historical reasons. It
+does not produce Boolean strings — `sourcing_strategy_agent` (Agent 2) does.
 """
 
 from google.adk.agents import LlmAgent

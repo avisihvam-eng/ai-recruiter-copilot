@@ -1,12 +1,19 @@
 """
-Agent 2: Outreach + LinkedIn Agent
-Reads jd_boolean_output from session state (set by Agent 1).
-Outputs: short outreach, detailed outreach, LinkedIn hiring post.
+Agent 3: Outreach + LinkedIn
+
+Reads jd_boolean_output from session state (set by Agent 1) and produces the
+short outreach message, the detailed outreach message, and the LinkedIn post.
 """
+
+import os
 
 from google.adk.agents import LlmAgent
 
-OUTREACH_LINKEDIN_PROMPT = """
+# This address is emitted inside every generated LinkedIn post. It is read from
+# the environment so it can be changed without editing (and re-testing) a prompt.
+CONTACT_EMAIL = os.getenv("LINKEDIN_CONTACT_EMAIL", "avinash.shukla@agreeya.com")
+
+_PROMPT_TEMPLATE = """
 You are a senior recruiter known for high response-rate outreach messages and compelling LinkedIn posts.
 
 You have access to the structured job data from the previous agent:
@@ -47,7 +54,7 @@ Experience: [X–Y years]
 
 If this sounds like you or someone in your network, feel free to reach out.
 
-📩 Send your resume to: avinash.shukla@agreeya.com
+📩 Send your resume to: __CONTACT_EMAIL__
 
 Let's connect.
 
@@ -57,6 +64,8 @@ LinkedIn post rules:
 
 Return ONLY the JSON. No explanation. No markdown.
 """
+
+OUTREACH_LINKEDIN_PROMPT = _PROMPT_TEMPLATE.replace("__CONTACT_EMAIL__", CONTACT_EMAIL)
 
 
 outreach_linkedin_agent = LlmAgent(

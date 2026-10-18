@@ -3,11 +3,15 @@ Orchestrator: Assembles the SequentialAgent pipeline and provides
 an async run_pipeline() function for the API layer to call.
 """
 
+import asyncio
 import json
 import os
 import re
-from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 from pathlib import Path
+
+from dotenv import load_dotenv
+
 env_path = Path(__file__).parent.parent / ".env"
 load_dotenv(dotenv_path=env_path, override=True)
 
@@ -33,6 +37,28 @@ recruiter_pipeline = SequentialAgent(
 _session_service = InMemorySessionService()
 
 APP_NAME = "ai_recruiter_copilot"
+
+# The google-genai SDK reads GOOGLE_API_KEY from the process environment, so a
+# caller-supplied key has to be installed process-wide. That is only safe if
+# runs do not interleave — otherwise one request can overwrite another's key
+# mid-flight (the previous implementation did exactly that, silently). This lock
+# serialises only the agent execution, not the retry backoff.
+_key_lock = asyncio.Lock()
+
+
+@asynccontextmanager
+async def _installed_api_key(key: str):
+    """Temporarily install ``key`` as the process API key, then restore."""
+    async with _key_lock:
+        previous = os.environ.get("GOOGLE_API_KEY")
+        os.environ["GOOGLE_API_KEY"] = key
+        try:
+            yield
+        finally:
+            if previous is None:
+                os.environ.pop("GOOGLE_API_KEY", None)
+            else:
+                os.environ["GOOGLE_API_KEY"] = previous
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
@@ -68,12 +94,9 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
     Returns:
         dict with keys: clean_jd, booleans, outreach, linkedin_post
     """
-    # Set API key for this request if provided
     effective_key = api_key or os.getenv("GOOGLE_API_KEY", "")
     if not effective_key:
         raise ValueError("No Gemini API key provided. Set GOOGLE_API_KEY or pass api_key in request.")
-
-    os.environ["GOOGLE_API_KEY"] = effective_key
 
     # Create a unique session per request
     import uuid
@@ -99,21 +122,25 @@ async def run_pipeline(raw_jd: str, api_key: str | None = None) -> dict:
         parts=[types.Part(text=f"Process this job description:\n\n{raw_jd}")],
     )
 
-    # Run the pipeline with retry for Gemini rate limits (429)
-    import asyncio
+    # Run the pipeline with retry for Gemini rate limits (429).
+    # The key is installed only for the duration of each attempt, and the
+    # backoff sleep happens outside the lock so a rate-limited request cannot
+    # block everyone else.
     max_retries = 3
     for attempt in range(max_retries + 1):
         try:
-            async for _event in runner.run_async(
-                user_id=user_id,
-                session_id=session_id,
-                new_message=user_message,
-            ):
-                pass  # We only need the final session state
+            async with _installed_api_key(effective_key):
+                async for _event in runner.run_async(
+                    user_id=user_id,
+                    session_id=session_id,
+                    new_message=user_message,
+                ):
+                    pass  # We only need the final session state
             break  # Success — exit retry loop
         except Exception as e:
             err_str = str(e)
-            if ("429" in err_str or "RESOURCE_EXHAUSTED" in err_str) and attempt < max_retries:
+            is_rate_limit = "429" in err_str or "RESOURCE_EXHAUSTED" in err_str
+            if is_rate_limit and attempt < max_retries:
                 wait = 10 * (2 ** attempt)  # 10s, 20s, 40s
                 await asyncio.sleep(wait)
                 # Recreate session for retry (state is reset)
