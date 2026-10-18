@@ -16,7 +16,11 @@ const STATUS = {
  */
 export default function Header({ status = 'checking' }) {
   const state = STATUS[status] ?? STATUS.checking
-  const showStatus = status !== 'online'
+  // Only a failure is worth interrupting someone for. The probe resolves in a
+  // few hundred ms, so "Checking backend" would flash in and out on every load
+  // — too brief to read, long enough to look like a glitch. Screen readers
+  // still hear every state through the live region below.
+  const showStatus = status === 'offline'
 
   return (
     <header className="app-header">
