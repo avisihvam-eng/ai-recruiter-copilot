@@ -129,7 +129,7 @@ export default function App() {
             Turn one job description into a complete recruiting kit.
           </h1>
           <p className="page-sub">
-            A role brief, Boolean search strings, candidate outreach, a LinkedIn post, and intake
+            A formatted job description, Boolean search strings, candidate outreach, a LinkedIn post, and intake
             prep — generated from your raw JD in a single run.
           </p>
         </section>
