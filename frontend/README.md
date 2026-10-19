@@ -1,16 +1,34 @@
-# React + Vite
+# MyHiringKit — frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite front end for MyHiringKit. See the [root README](../README.md) for the full picture.
 
-Currently, two official plugins are available:
+```bash
+npm install
+npm run dev     # http://localhost:5173 — expects the API on http://localhost:8000
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+For a production-like run, build into `../public` and let FastAPI serve both the API and the UI from one origin:
 
-## React Compiler
+```bash
+npm run build   # outputs to ../public (committed — this is what Vercel serves)
+cd .. && uvicorn backend.main:app --port 8000
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+`npm run build` empties `../public`, so the built asset filenames are rehashed on every build and the committed output must be regenerated and committed together.
 
-## Expanding the ESLint configuration
+## Layout
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+src/
+  App.jsx          run orchestration: streaming, regenerate, history
+  components/      UI
+  lib/api.js       API client, NDJSON stream reader, plain-endpoint fallback
+  lib/booleans.js  per-platform Boolean dialects + character budgets
+  lib/kit.js       kit → Markdown export, download helpers
+  lib/outlook.js   clipboard HTML for pasting into Outlook
+  lib/validateJd.js  pre-flight JD checks
+  lib/sections.js  section metadata (labels, progress copy, anchors)
+  data/sample.js   demo-mode fixtures
+```
+
+`npx eslint .` is expected to pass clean.

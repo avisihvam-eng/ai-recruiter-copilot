@@ -36,15 +36,6 @@ export function IconCheck(props) {
   )
 }
 
-export function IconDownload(props) {
-  return (
-    <svg {...base} {...props}>
-      <path d="M8 2v8" />
-      <path d="M4.8 6.9 8 10.1l3.2-3.2" />
-      <path d="M2.5 13.2h11" />
-    </svg>
-  )
-}
 
 /* Section icons. Used by the nav rail and the empty-state list so the five
    assets are identifiable at a glance rather than by reading. */
@@ -91,6 +82,36 @@ export function IconChecklist(props) {
     <svg {...base} {...props}>
       <rect x="2.2" y="2.2" width="11.6" height="11.6" rx="2.6" />
       <path d="m5.3 8.2 2 2 3.5-4.3" />
+    </svg>
+  )
+}
+
+export function IconRefresh(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M2.9 8a5.1 5.1 0 0 1 8.7-3.7l1.7 1.5" />
+      <path d="M13.1 2.6v3.3H9.8" />
+      <path d="M13.1 8a5.1 5.1 0 0 1-8.7 3.7l-1.7-1.5" />
+      <path d="M2.9 13.4v-3.3h3.3" />
+    </svg>
+  )
+}
+
+export function IconExternalLink(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M9.4 2.6h4v4" />
+      <path d="M13.4 2.6 7.6 8.4" />
+      <path d="M12.2 9.4v3.4a1.2 1.2 0 0 1-1.2 1.2H3.8a1.2 1.2 0 0 1-1.2-1.2V5.6a1.2 1.2 0 0 1 1.2-1.2h3.4" />
+    </svg>
+  )
+}
+
+export function IconPencil(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M11.1 2.6 13.4 4.9 5.6 12.7 2.6 13.4l.7-3z" />
+      <path d="m9.6 4.1 2.3 2.3" />
     </svg>
   )
 }

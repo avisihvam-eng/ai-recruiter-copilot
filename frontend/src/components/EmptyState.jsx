@@ -1,13 +1,14 @@
 import { SECTIONS } from '../lib/sections'
 
 /**
- * EmptyState — tells the user what they are about to get, and gives them a
- * zero-effort way to see a finished kit.
+ * EmptyState — tells the visitor what they are about to get.
  *
- * Deliberately a plain spec list rather than a feature-card grid: this is a
- * tool's starting state, not a marketing page.
+ * The sample affordance is deliberately not repeated here. It now sits beside
+ * Build, where the visitor is already looking, and two controls that both said
+ * "sample" while doing different things was the most confusing thing on the
+ * page.
  */
-export default function EmptyState({ onLoadSample }) {
+export default function EmptyState() {
   return (
     <div className="empty">
       <p className="empty-lead">Paste a job description above and you&rsquo;ll get five assets:</p>
@@ -24,11 +25,10 @@ export default function EmptyState({ onLoadSample }) {
         ))}
       </ul>
 
-      <div className="empty-action">
-        <button type="button" className="btn btn-quiet btn-sm" onClick={onLoadSample}>
-          No job description handy? See a filled-in example
-        </button>
-      </div>
+      <p className="empty-foot">
+        Nothing to paste yet? <strong>See an example kit</strong> is next to the Build button, and it
+        works without a job description.
+      </p>
     </div>
   )
 }

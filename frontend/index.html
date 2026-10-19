@@ -13,6 +13,24 @@
     />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2309090b'/><text x='16' y='21.5' font-family='Inter,Segoe UI,Arial,sans-serif' font-size='17' font-weight='600' fill='%23ffffff' text-anchor='middle'>M</text></svg>" />
     <meta name="theme-color" content="#ffffff" />
+
+    <!-- A shared link is the first thing a recruiter sees, and a bare link
+         renders as a grey box. og:image must be an absolute URL — relative ones
+         are ignored by LinkedIn and some other crawlers — so this needs updating
+         if the app ever moves off its current host. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MyHiringKit" />
+    <meta property="og:title" content="MyHiringKit — one job description in, a full recruiting kit out" />
+    <meta
+      property="og:description"
+      content="Formatted job description, Boolean search strings, candidate outreach, a LinkedIn post and an intake brief — generated from one raw job description."
+    />
+    <meta property="og:image" content="https://myhiringkit.vercel.app/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="MyHiringKit — one job description in, a full recruiting kit out." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://myhiringkit.vercel.app/og.png" />
   </head>
   <body>
     <div id="root"></div>

@@ -1,5 +1,6 @@
 import SectionCard from './SectionCard'
 import CopyButton from './CopyButton'
+import RegenerateButton from './RegenerateButton'
 import { briefFields, roleBriefToOutlookHtml } from '../lib/outlook'
 
 /**
@@ -15,7 +16,7 @@ import { briefFields, roleBriefToOutlookHtml } from '../lib/outlook'
  * decoration. The labels come from outlook.js so the visible text, the plain
  * copy and the Outlook HTML are generated from one list.
  */
-export default function RoleBrief({ id, num, cleanJd }) {
+export default function RoleBrief({ id, num, cleanJd, onRegenerate, busy }) {
   if (!cleanJd?.title) return null
 
   const {
@@ -55,8 +56,14 @@ export default function RoleBrief({ id, num, cleanJd }) {
       id={id}
       num={num}
       title="Formatted job description"
-      subtitle="A ready-to-send version of your posting. Your original wording is never rewritten."
-      actions={<CopyButton text={plainText} html={html} />}
+      subtitle="Your original wording is never rewritten."
+      busy={busy}
+      actions={
+        <>
+          <CopyButton text={plainText} html={html} />
+          <RegenerateButton asset={id} onRegenerate={onRegenerate} busy={busy} />
+        </>
+      }
     >
       {fields.length > 0 && (
         <div className="brief-fields">

@@ -1,5 +1,6 @@
 import SectionCard from './SectionCard'
 import CopyButton from './CopyButton'
+import RegenerateButton from './RegenerateButton'
 
 /**
  * RecruiterPrep — renders Agent 4's output.
@@ -8,7 +9,7 @@ import CopyButton from './CopyButton'
  * backend has always returned `recruiter_brief`, but the React UI never read
  * it, so the entire fourth agent was invisible to users.
  */
-export default function RecruiterPrep({ id, num, brief }) {
+export default function RecruiterPrep({ id, num, brief, onRegenerate, busy }) {
   if (!brief) return null
 
   const lead = brief.ideal_candidate || ''
@@ -35,8 +36,13 @@ export default function RecruiterPrep({ id, num, brief }) {
       id={id}
       num={num}
       title="Recruiter prep"
-      subtitle="Use this on the intake call, before you open the search"
-      actions={<CopyButton text={plainText} />}
+      busy={busy}
+      actions={
+        <>
+          <CopyButton text={plainText} />
+          <RegenerateButton asset={id} onRegenerate={onRegenerate} busy={busy} />
+        </>
+      }
     >
       {lead && (
         <div className="prep-group">

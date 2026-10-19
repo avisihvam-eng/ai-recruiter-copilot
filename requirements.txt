@@ -2,3 +2,7 @@ google-adk>=0.1.0
 fastapi>=0.110.0
 python-dotenv>=1.0.0
 pydantic>=2.0.0
+# Reads uploaded PDFs. Word and text uploads use the standard library, so a
+# deployment without this still works — the PDF path just returns a clear
+# message instead of failing obscurely.
+pypdf>=4.0.0

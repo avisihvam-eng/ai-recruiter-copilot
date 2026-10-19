@@ -2,39 +2,33 @@ import { useState } from 'react'
 
 import SectionCard from './SectionCard'
 import CopyButton from './CopyButton'
+import RegenerateButton from './RegenerateButton'
+import { IconExternalLink } from './Icons'
 import { straightenQuotes } from '../lib/outlook'
+import { PLATFORMS, characterBudget, formatForPlatform, googleSearchUrl } from '../lib/booleans'
 
 const TABS = [
-  {
-    key: 'strict',
-    label: 'Strict',
-    desc: 'Tightest match — explicit must-have skills only. Highest precision, smallest pool.',
-  },
-  {
-    key: 'balanced',
-    label: 'Balanced',
-    desc: 'Core skills plus genuinely adjacent titles and technologies. The usual starting point.',
-  },
-  {
-    key: 'broad',
-    label: 'Broad',
-    desc: 'Widest relevant net — useful for passive candidates and hard-to-fill roles.',
-  },
+  { key: 'strict', label: 'Strict' },
+  { key: 'balanced', label: 'Balanced' },
+  { key: 'broad', label: 'Broad' },
 ]
 
 /**
- * SearchStrings — Strict / Balanced / Broad Boolean switcher.
+ * SearchStrings — Strict / Balanced / Broad Boolean, formatted per destination.
  *
- * Falls back to the first tab that actually has content, so a partial payload
- * can never render an empty panel.
+ * The three destinations are not interchangeable. Google does not know NOT, so
+ * a LinkedIn string pasted into Google quietly adds a required term instead of
+ * excluding one; Naukri expects every keyword quoted and truncates past roughly
+ * 500 characters. Translating here is worth more than handing over one string
+ * and letting the search silently return the wrong people.
  *
- * Quotes are straightened for display AND copy: the destination is LinkedIn
- * Recruiter or an ATS query parser, where a model-emitted curly quote silently
- * fails to match. There is no HTML flavour on purpose — the target is a query
- * box, not an email body, so plain text is the correct flavour.
+ * The section deliberately shows the string, not a lecture about the string:
+ * one line of context under the controls, and the destination's own limits
+ * expressed as a counter rather than a paragraph.
  */
-export default function SearchStrings({ id, num, booleans }) {
+export default function SearchStrings({ id, num, booleans, onRegenerate, busy }) {
   const [requested, setRequested] = useState('strict')
+  const [platform, setPlatform] = useState('linkedin')
 
   if (!booleans) return null
 
@@ -42,11 +36,14 @@ export default function SearchStrings({ id, num, booleans }) {
   if (!available.length) return null
 
   const activeKey = available.some((tab) => tab.key === requested) ? requested : available[0].key
-  const current = straightenQuotes(booleans[activeKey])
-  const activeTab = TABS.find((tab) => tab.key === activeKey)
+  const activePlatform = PLATFORMS.find((p) => p.key === platform) ?? PLATFORMS[0]
+
+  const base = straightenQuotes(booleans[activeKey])
+  const query = formatForPlatform(base, platform)
+  const { count, limit, over, nearLimit } = characterBudget(query, activePlatform.limit)
 
   const allThree = available
-    .map((tab) => `${tab.label.toUpperCase()}\n${straightenQuotes(booleans[tab.key])}`)
+    .map((tab) => `${tab.label.toUpperCase()}\n${formatForPlatform(straightenQuotes(booleans[tab.key]), platform)}`)
     .join('\n\n')
 
   return (
@@ -54,11 +51,18 @@ export default function SearchStrings({ id, num, booleans }) {
       id={id}
       num={num}
       title="Search strings"
-      subtitle="Paste straight into LinkedIn Recruiter or your ATS"
+      busy={busy}
       actions={
         <>
-          <CopyButton text={current} label={`Copy ${activeTab.label.toLowerCase()}`} />
-          {available.length > 1 && <CopyButton text={allThree} label="Copy all three" />}
+          {available.length > 1 && (
+            <CopyButton
+              text={allThree}
+              label="Copy all three"
+              copiedLabel="Copied all three"
+              className="btn btn-quiet btn-sm"
+            />
+          )}
+          <RegenerateButton asset={id} onRegenerate={onRegenerate} busy={busy} />
         </>
       }
     >
@@ -80,15 +84,53 @@ export default function SearchStrings({ id, num, booleans }) {
         })}
       </div>
 
-      <p className="bool-desc">{activeTab?.desc}</p>
+      <div className="bool-string">{query}</div>
 
-      <div className="bool-string">{current}</div>
+      <div className="bool-bar">
+        <div className="platform-picker" role="group" aria-label="Destination platform">
+          {PLATFORMS.map((p) => (
+            <button
+              key={p.key}
+              type="button"
+              className={`chip${p.key === platform ? ' is-active' : ''}`}
+              aria-pressed={p.key === platform}
+              onClick={() => setPlatform(p.key)}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
 
-      <p className="doc-note">
-        Quotation marks, <code>AND</code>, <code>OR</code> and parentheses behave the same way in
-        LinkedIn Recruiter and most ATS query builders. Trim the parentheses if your ATS prefers
-        plain keywords.
-      </p>
+        <span className={`char-count${over ? ' is-over' : nearLimit ? ' is-near' : ''}`}>
+          {limit
+            ? `${count.toLocaleString()} / ${limit.toLocaleString()}`
+            : `${count.toLocaleString()} characters`}
+        </span>
+      </div>
+
+      <div className="bool-actions">
+        <CopyButton text={query} label={`Copy for ${activePlatform.short}`} className="btn btn-sm" />
+        {platform === 'google' && (
+          <a
+            className="btn btn-quiet btn-sm"
+            href={googleSearchUrl(base)}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <IconExternalLink />
+            Open in Google
+          </a>
+        )}
+      </div>
+
+      {over && (
+        <p className="char-warn" role="status">
+          Over {activePlatform.label}&rsquo;s limit — the box truncates silently. Trim a group or split
+          the search.
+        </p>
+      )}
+
+      <p className="doc-note">{activePlatform.note}</p>
     </SectionCard>
   )
 }

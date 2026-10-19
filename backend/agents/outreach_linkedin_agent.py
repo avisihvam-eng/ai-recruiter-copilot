@@ -3,6 +3,9 @@ Agent 3: Outreach + LinkedIn
 
 Reads jd_boolean_output from session state (set by Agent 1) and produces the
 short outreach message, the detailed outreach message, and the LinkedIn post.
+
+Both messages are word-budgeted. A recruiter sends a note, not an essay, and
+output length is the cost driver on the free tier.
 """
 
 import os
@@ -14,55 +17,50 @@ from google.adk.agents import LlmAgent
 CONTACT_EMAIL = os.getenv("LINKEDIN_CONTACT_EMAIL", "avinash.shukla@agreeya.com")
 
 _PROMPT_TEMPLATE = """
-You are a senior recruiter known for high response-rate outreach messages and compelling LinkedIn posts.
-
-You have access to the structured job data from the previous agent:
+You are a senior recruiter known for high response-rate outreach.
 
 STRUCTURED JD DATA:
 {jd_boolean_output}
 
-Using that data, generate a SINGLE valid JSON object (no markdown, no code blocks, just raw JSON):
+Using that data, return a SINGLE valid JSON object (no markdown, no code fences):
 
 {
-  "outreach_short": "Short outreach message — MAX 40 words. See rules below.",
-  "outreach_detailed": "Detailed outreach message — MAX 70 words. See rules below.",
-  "linkedin_post": "Full LinkedIn hiring post following the exact format below."
+  "outreach_short": "MAX 35 words, excluding the greeting.",
+  "outreach_detailed": "MAX 50 words, excluding the greeting.",
+  "linkedin_post": "The hiring post, in the format below."
 }
 
-OUTREACH_RULES — follow exactly:
-- ALWAYS open both messages with exactly: Hi %FIRSTNAME%,
-  (This is LinkedIn Recruiter's native personalization token. Do not change it, do not use [Candidate Name] or any bracket placeholder.)
-- FORMAT: put "Hi %FIRSTNAME%," on its own line, then a blank line (\\n\\n), then the body. Put the closing question in its own paragraph after another blank line. Use \\n for line breaks inside the JSON string.
-- Short outreach: MAX 40 words total (excluding the greeting). Two sentences + one short question. Role + one specific skill match + CTA. No filler.
-- Detailed outreach: MAX 70 words total (excluding the greeting). Role, 2 specific skills from the JD, one short CTA question. Warm, direct, plain English.
-- Cut every word that doesn't add meaning. No adjectives like "comprehensive", "pivotal", "high-quality", "demonstrated". No "We are building out our team".
-- NEVER use phrases like "exciting opportunity", "fast-paced environment", "I came across your profile", or "hope this finds you well"
-- Reference actual skills and role details from the JD — do not leave any [bracket placeholders] in the output
-- Sound like a real recruiter writing a quick note to a real person
+MESSAGE RULES:
+- Open both messages with exactly: Hi %FIRSTNAME%,
+  That is LinkedIn Recruiter's native token. Never substitute [Candidate Name].
+- Layout: "Hi %FIRSTNAME%," then a blank line (\\n\\n), the body, a blank line,
+  then one closing question. Use \\n for line breaks inside the JSON string.
+- Short: role + one specific skill from the JD + one short question.
+- Detailed: role + two specific skills + one short question. Warm, direct, plain English.
+- Cut every word that does not add meaning. No "comprehensive", "pivotal",
+  "high-quality", "exciting opportunity", "fast-paced environment",
+  "I came across your profile", "hope this finds you well".
+- No [bracket placeholders] anywhere in the output.
 
-LINKEDIN POST FORMAT (use exactly this structure, fill in from JD data):
+LINKEDIN POST — use exactly this structure:
 
 🚀 Hiring: [Job Title]
 
 Looking for someone strong in:
-• [Top Skill 1]
-• [Top Skill 2]
-• [Top Skill 3]
+• [Skill 1]
+• [Skill 2]
+• [Skill 3]
 
 Location: [Location]
 Experience: [X–Y years]
 
-If this sounds like you or someone in your network, feel free to reach out.
+If this sounds like you or someone in your network, reach out.
 
 📩 Send your resume to: __CONTACT_EMAIL__
 
-Let's connect.
+Post rules: fill every bracket from the JD, keep the emoji and bullets, no extra paragraphs.
 
-LinkedIn post rules:
-- Use emoji, bullet points, exactly the format above
-- Fill in real skills from the JD — no bracket placeholders in the final output
-
-Return ONLY the JSON. No explanation. No markdown.
+Return ONLY the JSON.
 """
 
 OUTREACH_LINKEDIN_PROMPT = _PROMPT_TEMPLATE.replace("__CONTACT_EMAIL__", CONTACT_EMAIL)

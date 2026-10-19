@@ -77,25 +77,3 @@ export function buildMarkdownKit(result) {
   return `${out.join('\n\n')}\n`
 }
 
-/** Derive a tidy filename from the role title. */
-export function kitFilename(title = '') {
-  const slug = String(title)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 60)
-  return `${slug || 'recruiter-kit'}.md`
-}
-
-/** Trigger a browser download of the given text. */
-export function downloadText(text, filename) {
-  const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const anchor = document.createElement('a')
-  anchor.href = url
-  anchor.download = filename
-  document.body.appendChild(anchor)
-  anchor.click()
-  anchor.remove()
-  URL.revokeObjectURL(url)
-}

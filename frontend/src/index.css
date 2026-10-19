@@ -182,12 +182,29 @@ kbd {
   flex: 0 0 auto;
 }
 
-.header-status.is-online .status-dot { background: var(--ok); }
 .header-status.is-offline .status-dot { background: var(--danger); }
-.header-status.is-checking .status-dot { background: var(--warn); }
-
 .header-status.is-offline { color: var(--danger); }
-.header-status.is-checking { color: var(--text-4); }
+
+/* A cold serverless start is expected, not a fault — so it reads as a quiet
+   status with a spinner rather than a red warning. */
+.header-status.is-warming { color: var(--text-2); }
+.header-status.is-warming .status-text { font-weight: 500; }
+
+.status-spinner {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 1.5px solid var(--accent-line);
+  border-top-color: var(--accent);
+  animation: status-spin 700ms linear infinite;
+}
+
+@keyframes status-spin {
+  to { transform: rotate(360deg); }
+}
+
+.header-status .btn-sm { height: 26px; font-size: 11.5px; padding: 0 9px; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Page head + composer
@@ -238,13 +255,79 @@ kbd {
   box-shadow: var(--shadow-2);
 }
 
+.composer-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px 0;
+}
+
 .composer-label {
   display: block;
-  padding: 14px 16px 0;
   font-size: 12px;
   font-weight: 600;
   color: var(--text-2);
 }
+
+/* A label acting as a control, so the file input stays keyboard reachable
+   instead of being a display:none input triggered by a click handler. */
+.composer-upload {
+  font-size: 11.5px;
+  color: var(--text-3);
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: color 120ms ease, border-color 120ms ease;
+}
+
+.composer-upload:hover { color: var(--text); border-bottom-color: var(--line-2); }
+.composer-upload:has(input:disabled) { opacity: 0.45; cursor: not-allowed; }
+
+.import-note {
+  margin: 12px 16px 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--text-3);
+}
+
+.import-note.is-warn { color: var(--warn); }
+
+.composer-toggle {
+  display: block;
+  margin: 10px 16px 0;
+}
+
+.composer-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  padding: 12px 16px 16px;
+  margin-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.field { display: flex; flex-direction: column; gap: 4px; }
+
+.field-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.field-input {
+  width: 100%;
+  padding: 7px 10px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.field-input::placeholder { color: var(--text-4); }
 
 .jd-editor {
   display: block;
@@ -353,6 +436,30 @@ kbd {
 .btn-quiet:disabled { color: var(--text-4); cursor: not-allowed; }
 
 .btn-sm { height: 28px; font-size: 12px; padding: 0 10px; }
+
+/* A link that does something, in a place where a bordered button would just be
+   noise. Still a real <button>, so it stays keyboard-reachable and announced. */
+.link-btn {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link-btn:hover { color: var(--accent-hover); }
+
+/* WCAG 2.5.8 asks for a 24px target; touch guidance asks for 44px. Rather than
+   inflate the whole desktop UI, grow the targets only where fingers aim. */
+@media (pointer: coarse) {
+  .btn, .btn-sm, .copy-btn, .recent-item, .kit-nav-link { min-height: 44px; }
+  .btn-sm { padding: 0 12px; }
+  .link-btn { padding: 12px 0; }
+}
 
 .copy-btn {
   display: inline-flex;
@@ -513,26 +620,60 @@ kbd {
 .loading-sub { font-size: 11.5px; color: var(--text-4); margin-top: 1px; }
 
 .loading-steps {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
+  display: grid;
+  gap: 7px;
   list-style: none;
   padding: 0;
-  margin-top: 14px;
+  margin: 14px 0 0;
 }
 
-.loading-steps li {
+.loading-step {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 11.5px;
   color: var(--text-3);
 }
 
+.loading-step-label { flex: 1 1 auto; min-width: 0; }
+
+.loading-step-state { font-size: 10.5px; color: var(--text-4); }
+
+.loading-step.is-running { color: var(--text); }
+.loading-step.is-running .loading-step-state { color: var(--accent); }
+.loading-step.is-done .loading-step-state { color: var(--ok); }
+
+/* One glyph carrying three states: hollow (queued), spinning (working), tick
+   (done). A row that changes shape is readable at a glance in a way a moving
+   progress bar is not, because it says *which* asset finished. */
 .loading-tick {
-  width: 4px; height: 4px;
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--line-2);
   border-radius: 50%;
-  background: var(--line-2);
+  font-size: 9px;
+  line-height: 1;
+  color: #fff;
+}
+
+.loading-step.is-running .loading-tick {
+  border-color: var(--accent-line);
+  border-top-color: var(--accent);
+  animation: status-spin 700ms linear infinite;
+}
+
+.loading-step.is-done .loading-tick {
+  border-color: var(--ok);
+  background: var(--ok);
+}
+
+.loading-note {
+  margin: 12px 0 0;
+  font-size: 11.5px;
+  color: var(--warn);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -570,13 +711,14 @@ kbd {
 .empty-label { font-weight: 500; color: var(--text); flex: 0 0 auto; }
 .empty-blurb { color: var(--text-4); min-width: 0; }
 
-.empty-action {
-  padding: 11px 16px;
+.empty-foot {
+  padding: 13px 16px;
   border-top: 1px solid var(--line);
   background: var(--surface);
-  display: flex;
-  justify-content: flex-start;
+  color: var(--text-3);
 }
+
+.empty-foot strong { color: var(--text); font-weight: 600; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Kit — toolbar, nav rail, document
@@ -830,8 +972,6 @@ kbd {
   box-shadow: var(--shadow-1);
 }
 
-.bool-desc { font-size: 11.5px; color: var(--text-4); margin-bottom: 10px; max-width: 68ch; }
-
 .bool-string {
   font-family: var(--mono);
   font-size: 12.5px;
@@ -1004,17 +1144,288 @@ kbd {
   border-top: 1px solid var(--line);
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  gap: 12px;
+  gap: 12px 24px;
   font-size: 11.5px;
   color: var(--text-4);
 }
 
-.footer-links { display: flex; gap: 18px; }
+/* Recruiters do not care which model or framework is underneath; they care how
+   much of their week this gives back. */
+.footer-value {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.footer-links { display: flex; gap: 18px; align-items: baseline; }
 
 .footer a { color: var(--text-4); text-decoration: none; }
 .footer a:hover { color: var(--text); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Recent kits
+   ═══════════════════════════════════════════════════════════════════════════ */
+.recent {
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.recent-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.recent-title {
+  margin: 0;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 12px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.recent-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-width: 260px;
+  padding: 7px 11px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.recent-item:hover { border-color: var(--line-2); background: var(--surface); }
+.recent-item.is-active { border-color: var(--accent-line); background: var(--accent-soft); }
+
+.recent-item-title {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-item-meta { font-size: 10.5px; color: var(--text-3); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Input validation
+   ═══════════════════════════════════════════════════════════════════════════ */
+.composer-warn {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   About dialog
+   ═══════════════════════════════════════════════════════════════════════════ */
+.about {
+  width: min(560px, calc(100vw - 32px));
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 18px 48px rgba(9, 9, 11, 0.16);
+}
+
+.about::backdrop { background: rgba(9, 9, 11, 0.35); }
+
+.about-title { margin: 0 0 12px; font-size: 17px; font-weight: 600; }
+
+.about-body {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--text-2);
+}
+
+.about-specs { margin: 16px 0; display: grid; gap: 8px; }
+
+.about-specs > div { display: flex; gap: 10px; font-size: 12.5px; }
+
+.about-specs dt { flex: 0 0 84px; color: var(--text-3); }
+.about-specs dd { margin: 0; color: var(--text); }
+
+.about-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Chips — destination picker, outreach tone
+   ═══════════════════════════════════════════════════════════════════════════ */
+.chip {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 11px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.chip:hover:not(:disabled) { border-color: var(--line-2); color: var(--text); }
+
+.chip.is-active {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  color: var(--accent-hover);
+}
+
+.chip:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Search strings — destination bar and length budget
+   ═══════════════════════════════════════════════════════════════════════════ */
+.bool-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.platform-picker { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Monospace so the number does not jiggle while the string is edited. */
+.char-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-4);
+  white-space: nowrap;
+}
+
+.char-count.is-near { color: var(--warn); }
+.char-count.is-over { color: var(--danger); font-weight: 600; }
+
+.char-unit { font-family: var(--sans); color: var(--text-4); }
+
+.bool-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+
+.char-warn {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--danger);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Outreach — inline editing and length budget
+   ═══════════════════════════════════════════════════════════════════════════ */
+.msg-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+
+.msg-editor {
+  width: 100%;
+  min-height: 96px;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: var(--text-2);
+  background: var(--bg);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r);
+  padding: 11px 13px;
+  resize: vertical;
+}
+
+/* The one token a recruiter must leave exactly as written — it is replaced on
+   send, and any edit to it silently breaks the personalisation. */
+.token {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent-hover);
+  background: var(--accent-soft);
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LinkedIn post preview
+   ═══════════════════════════════════════════════════════════════════════════ */
+.li-card {
+  max-width: 560px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--bg);
+}
+
+.li-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+
+.li-avatar {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.li-identity { display: flex; flex-direction: column; }
+
+.li-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.li-meta { font-size: 11.5px; color: var(--text-4); }
+
+/* pre-wrap is the point: the post is line breaks and bullet characters. */
+.li-body {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.li-foot {
+  display: flex;
+  gap: 20px;
+  margin-top: 14px;
+  padding-top: 11px;
+  border-top: 1px solid var(--line);
+  font-size: 11.5px;
+  color: var(--text-4);
+}
+
+/* Regenerating one asset leaves the other four readable. */
+.doc-section.is-busy .doc-body { opacity: 0.5; transition: opacity 120ms ease; }
+
+.spin { display: inline-flex; animation: status-spin 900ms linear infinite; }
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Motion
@@ -1076,6 +1487,13 @@ kbd {
   .bool-tabs { width: 100%; }
   .tab { flex: 1; text-align: center; }
   .empty-blurb { display: none; }
+  .composer-actions { flex-wrap: wrap; }
+  .composer-details { grid-template-columns: minmax(0, 1fr); }
+  .msg-head { flex-direction: column; align-items: flex-start; }
+  .msg-actions { width: 100%; }
+  .li-card { padding: 13px; }
+  .recent-list { padding: 10px 12px; }
+  .recent-item { max-width: 100%; }
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1083,7 +1501,8 @@ kbd {
    ═══════════════════════════════════════════════════════════════════════════ */
 @media print {
   .app-header, .page-head, .composer, .kit-head, .kit-nav, .doc-actions,
-  .empty, .alert, .composer-hint, .source-actions, .footer, .kit-notice {
+  .empty, .alert, .composer-hint, .source-actions, .footer, .kit-notice,
+  .recent, .about {
     display: none !important;
   }
 

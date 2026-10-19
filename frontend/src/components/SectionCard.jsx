@@ -5,6 +5,9 @@
  * rhythm stay identical across the document. It is deliberately NOT a floating
  * card: sections are separated by hairlines inside a single document panel, so
  * five results read as one artifact rather than five competing boxes.
+ *
+ * `busy` marks the one section currently being regenerated, so the rest of the
+ * document stays legible while a single asset is rewritten underneath it.
  */
 export default function SectionCard({
   id,
@@ -12,6 +15,7 @@ export default function SectionCard({
   title,
   subtitle,
   actions,
+  busy = false,
   className = '',
   children,
 }) {
@@ -20,7 +24,8 @@ export default function SectionCard({
       id={id}
       tabIndex={-1}
       aria-labelledby={`${id}-title`}
-      className={`doc-section scroll-margin ${className}`.trim()}
+      aria-busy={busy || undefined}
+      className={`doc-section scroll-margin${busy ? ' is-busy' : ''} ${className}`.trim()}
     >
       <header className="doc-head">
         <div className="doc-head-main">

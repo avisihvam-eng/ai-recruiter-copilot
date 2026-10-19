@@ -34,7 +34,9 @@ app.add_middleware(
     allow_origins=allowed_origins(),
     allow_credentials=False,  # no cookies or auth headers are used
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type"],
+    # X-Filename carries the upload's name, because the file body is sent raw
+    # rather than as multipart.
+    allow_headers=["Content-Type", "X-Filename"],
 )
 
 app.include_router(router, prefix="/api")

@@ -6,51 +6,51 @@ JSON, written to the `jd_boolean_output` key.
 
 Naming note: this module is called `jd_boolean_agent` for historical reasons. It
 does not produce Boolean strings — `sourcing_strategy_agent` (Agent 2) does.
+
+Output is word-budgeted on purpose. The free tier is request- and token-limited,
+and every extra clause here is also four times the input cost for the three
+agents downstream that interpolate this JSON.
 """
 
 from google.adk.agents import LlmAgent
 
 JD_BOOLEAN_PROMPT = """
-You are a talent-intelligence partner and expert technical recruiter with 10+ years of sourcing experience.
-
-You will receive a raw job description below:
+You are an expert technical recruiter. Turn the raw job description below into a concise structured brief.
 
 RAW JD:
 {raw_jd}
 
-Your task is to create a concise recruiter brief from this JD and return a SINGLE valid JSON object (no markdown, no code blocks, just raw JSON).
+The source job description is a recruiter-owned document. Do not invent requirements, seniority, location, compensation, clearance, work authorization, or benefits. Do not rewrite the source; the brief is a separate planning aid.
 
-The source job description is a recruiter-owned document. Do not invent requirements, seniority, location, compensation, clearance, work authorization, or benefits. Do not alter or rewrite the source document; your brief is a separate planning aid.
+Return a SINGLE valid JSON object (no markdown, no code fences) with exactly this shape:
 
-The JSON must match this exact structure:
 {
   "clean_jd": {
-    "title": "Job title extracted from JD",
+    "title": "Job title, exactly as the JD states it",
     "location": "City, State or Remote",
     "experience": "e.g. 5-8 years",
-    "objective": "2-3 sentence recruiter brief. What this person does, the environment they work in, and the value they deliver. Professional, human-readable. No bullet points.",
+    "objective": "Two sentences, max 35 words. What this person does and the value they deliver.",
     "responsibilities": [
-      "Begin each with an action verb. Keep to one focused idea per bullet. 4-6 items max."
+      "3-5 items. Begin with an action verb. Max 10 words each."
     ],
     "required_skills": [
-      "Each item is a full descriptive sentence: state the skill, the expected proficiency level, and any relevant context from the JD. Not bare keywords. 5-8 items."
+      "4-6 items. Skill plus a short qualifier from the JD. Max 12 words each. Never a bare keyword."
     ],
     "preferred_skills": [
-      "Each item is a full descriptive sentence describing a nice-to-have skill with context. Use only JD-stated preferences; when an adjacent inference is useful, label it explicitly as 'Inferred:'. 2-4 items."
+      "2-3 items, same format. Max 12 words each. Only what the JD states or clearly implies; label an inference as 'Inferred:'."
     ]
   }
 }
 
-CRITICAL FORMATTING RULES:
-1. "objective" — exactly 2-3 sentences. Do NOT use bullet points. Write like a human, not a job board.
-2. "responsibilities" (these are the JOB DUTIES) — REQUIRED, never empty. 4-6 items. Pull them from the JD's duties / responsibilities / "what you'll do" / "role overview" content. If the JD has no explicit duties section, derive the duties from the role description and summary — do not invent new scope. Each starts with a strong action verb (Coordinate, Maintain, Build, Track, etc). One idea per bullet, max ~15 words. Do not pad.
-3. "required_skills" — NEVER use bare keywords like "Python" or "SQL". Each item MUST be a complete sentence that names the skill AND describes the expected proficiency or use case from the JD. Example: "Hands-on experience with Python or PowerShell for monitoring automation and configuration scripting tasks."
-4. "preferred_skills" — same sentence format as required_skills. Only include preferences explicitly stated or clearly labelled as inferred; do not turn assumptions into requirements.
-5. Overall length: balanced. Structured. Not a wall of text. Every word must earn its place.
+RULES:
+1. "objective" — exactly two sentences, no bullet points. Write like a person, not a job board.
+2. "responsibilities" — the JOB DUTIES, never empty. Pull them from the duties / "what you'll do" / role overview. If none are explicit, derive them from the summary without adding new scope.
+3. "required_skills" — a skill with enough context to be useful ("Python for monitoring automation", not "Python", not a full paragraph).
+4. Every item must fit its word budget. Cut the word, keep the meaning. No filler ("comprehensive", "pivotal", "high-quality").
+5. Title, location and experience must be copied from the JD, not inferred.
 
-Return ONLY the JSON. No explanation. No markdown. No code fences.
+Return ONLY the JSON.
 """
-
 
 jd_boolean_agent = LlmAgent(
     name="jd_boolean_agent",

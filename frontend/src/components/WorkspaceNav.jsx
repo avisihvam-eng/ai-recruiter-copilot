@@ -31,7 +31,6 @@ export default function WorkspaceNav({ activeId, onJump }) {
                 </span>
                 <span className="kit-nav-text">
                   <span className="kit-nav-title">{section.label}</span>
-                  <span className="kit-nav-blurb">{section.blurb}</span>
                 </span>
               </a>
             </li>
